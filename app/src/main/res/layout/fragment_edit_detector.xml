@@ -1,0 +1,198 @@
+<?xml version="1.0" encoding="utf-8"?>
+<androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:id="@+id/fragment_edit_detector"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:background="?android:windowBackground">
+
+    <TextView
+        android:id="@+id/txtDetectorEdit"
+        android:layout_width="230dp"
+        android:layout_height="40dp"
+        android:layout_marginStart="15dp"
+        android:gravity="center|left"
+        android:text="Тип детектора"
+        android:textColor="@color/black"
+        android:textSize="16sp"
+        app:layout_constraintBottom_toBottomOf="@+id/spinner_detector_edit"
+        app:layout_constraintEnd_toStartOf="@+id/spinner_detector_edit"
+        app:layout_constraintHorizontal_bias="0.0"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="@+id/spinner_detector_edit"
+        app:layout_constraintVertical_bias="0.0" />
+
+    <Spinner
+        android:id="@+id/spinner_detector_edit"
+        android:layout_width="150dp"
+        android:layout_height="40dp"
+
+        android:layout_marginTop="16dp"
+
+        android:spinnerMode="dialog"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintHorizontal_bias="0.938"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent"
+        tools:ignore="MissingConstraints" />
+
+    <TextView
+        android:id="@+id/txtBackgroundEdit"
+        android:layout_width="230dp"
+        android:layout_height="40dp"
+        android:layout_marginStart="15dp"
+        android:gravity="center|left"
+        android:text="Фон, имп/с"
+        android:textColor="@color/black"
+        android:textSize="16sp"
+        app:layout_constraintBottom_toBottomOf="@+id/backgroundEdit"
+        app:layout_constraintEnd_toStartOf="@+id/backgroundEdit"
+        app:layout_constraintHorizontal_bias="0.0"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="@+id/backgroundEdit"
+        app:layout_constraintVertical_bias="0.0" />
+
+    <EditText
+        android:id="@+id/backgroundEdit"
+        android:layout_width="150dp"
+        android:layout_height="40dp"
+        android:ems="10"
+        android:focusableInTouchMode="true"
+        android:hint="Фон"
+        android:inputType="numberDecimal"
+        android:textSize="16sp"
+        app:layout_constraintEnd_toEndOf="@+id/spinner_detector_edit"
+        app:layout_constraintStart_toEndOf="@+id/txtDetectorEdit"
+        app:layout_constraintTop_toBottomOf="@+id/spinner_detector_edit" />
+
+    <TextView
+        android:id="@+id/txtDistanceXEdit"
+        android:layout_width="230dp"
+        android:layout_height="40dp"
+        android:layout_marginStart="15dp"
+        android:layout_marginEnd="1dp"
+        android:gravity="center|left"
+        android:text="Расстояние по X, м"
+        android:textColor="@color/black"
+        android:textSize="16sp"
+        app:layout_constraintBottom_toBottomOf="@+id/distanceXEdit"
+        app:layout_constraintEnd_toStartOf="@+id/distanceXEdit"
+        app:layout_constraintHorizontal_bias="0.0"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="@+id/distanceXEdit"
+        app:layout_constraintVertical_bias="0.0" />
+
+    <EditText
+        android:id="@+id/distanceXEdit"
+        android:layout_width="150dp"
+        android:layout_height="40dp"
+        android:ems="10"
+        android:focusableInTouchMode="true"
+        android:hint="Расстояние X"
+        android:inputType="numberDecimal"
+        android:textSize="16sp"
+        app:layout_constraintEnd_toEndOf="@+id/backgroundEdit"
+        app:layout_constraintHorizontal_bias="0.0"
+        app:layout_constraintStart_toStartOf="@+id/backgroundEdit"
+        app:layout_constraintTop_toBottomOf="@+id/backgroundEdit" />
+
+    <TextView
+        android:id="@+id/txtDistanceYEdit"
+        android:layout_width="230dp"
+        android:layout_height="40dp"
+        android:layout_marginStart="15dp"
+        android:gravity="center|left"
+        android:text="Расстояние по Y, м"
+        android:textColor="@color/black"
+        android:textSize="16sp"
+        app:layout_constraintBottom_toBottomOf="@+id/distanceYEdit"
+        app:layout_constraintEnd_toStartOf="@+id/distanceYEdit"
+        app:layout_constraintHorizontal_bias="0.0"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="@+id/distanceYEdit"
+        app:layout_constraintVertical_bias="0.0" />
+
+    <EditText
+        android:id="@+id/distanceYEdit"
+        android:layout_width="150dp"
+        android:layout_height="40dp"
+        android:ems="10"
+        android:focusableInTouchMode="true"
+        android:hint="Расстояние Y"
+        android:inputType="numberDecimal"
+        android:textSize="16sp"
+        app:layout_constraintEnd_toEndOf="@+id/distanceXEdit"
+        app:layout_constraintHorizontal_bias="0.0"
+        app:layout_constraintStart_toStartOf="@+id/distanceXEdit"
+        app:layout_constraintTop_toBottomOf="@+id/distanceXEdit" />
+
+    <TextView
+        android:id="@+id/txtDistanceZEdit"
+        android:layout_width="230dp"
+        android:layout_height="40dp"
+        android:layout_marginStart="15dp"
+        android:gravity="center|left"
+        android:text="Расстояние по Z, м"
+        android:textColor="@color/black"
+        android:textSize="16sp"
+        app:layout_constraintBottom_toBottomOf="@+id/distanceZEdit"
+        app:layout_constraintEnd_toStartOf="@+id/distanceZEdit"
+        app:layout_constraintHorizontal_bias="0.0"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="@+id/distanceZEdit"
+        app:layout_constraintVertical_bias="0.0" />
+
+    <EditText
+        android:id="@+id/distanceZEdit"
+        android:layout_width="150dp"
+        android:layout_height="40dp"
+        android:ems="10"
+        android:focusableInTouchMode="true"
+        android:hint="Расстояние Z"
+        android:inputType="numberDecimal"
+        android:textSize="16sp"
+        app:layout_constraintEnd_toEndOf="@+id/distanceYEdit"
+        app:layout_constraintHorizontal_bias="0.0"
+        app:layout_constraintStart_toStartOf="@+id/distanceYEdit"
+        app:layout_constraintTop_toBottomOf="@+id/distanceYEdit" />
+
+    <TextView
+        android:id="@+id/txtSensitivityEdit"
+        android:layout_width="255dp"
+        android:layout_height="40dp"
+        android:gravity="center|left"
+        android:text="Чувствительность"
+        android:textColor="@color/black"
+        android:textSize="16sp"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintHorizontal_bias="0.096"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/txtDistanceZEdit"
+        app:layout_constraintVertical_bias="0.0" />
+
+    <androidx.recyclerview.widget.RecyclerView
+        android:id="@+id/sensitivityEdit"
+        android:layout_width="0dp"
+        android:layout_height="270dp"
+        app:layout_constraintBottom_toTopOf="@+id/edit_detector"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintHorizontal_bias="1.0"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/txtSensitivityEdit"
+        app:layout_constraintVertical_bias="0.312" />
+
+    <Button
+        android:id="@+id/edit_detector"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="5dp"
+        android:onClick="onClick"
+        android:text="Сохранить"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent"
+        app:layout_constraintVertical_bias="0.976" />
+</androidx.constraintlayout.widget.ConstraintLayout>

@@ -1,0 +1,232 @@
+<?xml version="1.0" encoding="utf-8"?>
+<androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:id="@+id/fragment_add_source">
+
+    <TextView
+        android:id="@+id/txtSource"
+        android:layout_width="260dp"
+        android:layout_height="40dp"
+        android:layout_marginStart="15dp"
+        android:gravity="center|left"
+        android:text="Радионуклид"
+        android:textColor="@color/black"
+        android:textSize="16sp"
+        app:layout_constraintBottom_toBottomOf="@+id/spinner_source"
+        app:layout_constraintEnd_toStartOf="@+id/spinner_source"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="@+id/spinner_source" />
+
+
+    <Spinner
+        android:id="@+id/spinner_source"
+        android:layout_width="125dp"
+        android:layout_height="40dp"
+
+        android:layout_marginTop="16dp"
+
+        android:spinnerMode="dialog"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintHorizontal_bias="0.948"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent"
+        tools:ignore="MissingConstraints" />
+
+    <TextView
+        android:id="@+id/txtCoefficient"
+        android:layout_width="260dp"
+        android:layout_height="40dp"
+        android:layout_marginStart="15dp"
+        android:gravity="center|left"
+        android:text="Коэффициент"
+        android:textColor="@color/black"
+        android:textSize="16sp"
+        app:layout_constraintBottom_toBottomOf="@+id/coefficient"
+        app:layout_constraintEnd_toStartOf="@+id/coefficient"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="@+id/coefficient" />
+
+    <EditText
+        android:id="@+id/coefficient"
+        android:layout_width="125dp"
+        android:layout_height="40dp"
+        android:ems="10"
+        android:focusableInTouchMode="true"
+        android:hint="Коэффициент"
+        android:inputType="numberDecimal"
+        android:textSize="16sp"
+        app:layout_constraintEnd_toEndOf="@+id/spinner_source"
+        app:layout_constraintStart_toStartOf="@+id/spinner_source"
+        app:layout_constraintTop_toBottomOf="@+id/spinner_source" />
+
+
+    <EditText
+        android:id="@+id/activitySource"
+        android:layout_width="125dp"
+        android:layout_height="40dp"
+        android:layout_marginTop="1dp"
+        android:ems="10"
+        android:focusableInTouchMode="true"
+        android:hint="Активность"
+        android:inputType="numberDecimal"
+        android:textSize="16sp"
+        app:layout_constraintEnd_toEndOf="@+id/coefficient"
+        app:layout_constraintStart_toStartOf="@+id/coefficient"
+        app:layout_constraintTop_toBottomOf="@+id/coefficient" />
+
+    <TextView
+        android:id="@+id/txtActivitySource"
+        android:layout_width="260dp"
+        android:layout_height="40dp"
+        android:layout_marginStart="15dp"
+        android:gravity="center|left"
+        android:text="Активность, кБк"
+        android:textColor="@color/black"
+        android:textSize="16sp"
+        app:layout_constraintBottom_toBottomOf="@+id/activitySource"
+        app:layout_constraintEnd_toStartOf="@+id/activitySource"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="@+id/activitySource" />
+
+    <TextView
+        android:id="@+id/txtCoordinateSourceX"
+        android:layout_width="260dp"
+        android:layout_height="40dp"
+        android:layout_marginStart="15dp"
+        android:gravity="center|left"
+        android:text="Расстояние по X, м"
+        android:textColor="@color/black"
+        android:textSize="16sp"
+        app:layout_constraintBottom_toBottomOf="@+id/coordinateSourceX"
+        app:layout_constraintEnd_toStartOf="@+id/coordinateSourceX"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="@+id/coordinateSourceX" />
+
+    <EditText
+        android:id="@+id/coordinateSourceX"
+        android:layout_width="125dp"
+        android:layout_height="40dp"
+        android:ems="10"
+        android:focusableInTouchMode="true"
+        android:hint="Расстояние X"
+        android:inputType="numberDecimal"
+        android:textSize="16sp"
+        app:layout_constraintEnd_toEndOf="@+id/activitySource"
+        app:layout_constraintStart_toStartOf="@+id/activitySource"
+        app:layout_constraintTop_toBottomOf="@+id/activitySource" />
+
+    <TextView
+        android:id="@+id/txtCoordinateSourceY"
+        android:layout_width="260dp"
+        android:layout_height="40dp"
+        android:layout_marginStart="15dp"
+        android:gravity="center|left"
+        android:text="Расстояние по Y, м"
+        android:textColor="@color/black"
+        android:textSize="16sp"
+        app:layout_constraintBottom_toBottomOf="@+id/coordinateSourceY"
+        app:layout_constraintEnd_toStartOf="@+id/coordinateSourceY"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="@+id/coordinateSourceY" />
+
+    <EditText
+        android:id="@+id/coordinateSourceY"
+        android:layout_width="125dp"
+        android:layout_height="40dp"
+        android:layout_marginTop="1dp"
+        android:ems="10"
+        android:focusableInTouchMode="true"
+        android:hint="Расстояние Y"
+        android:inputType="numberDecimal"
+        android:textSize="16sp"
+        app:layout_constraintEnd_toEndOf="@+id/coordinateSourceX"
+        app:layout_constraintStart_toStartOf="@+id/coordinateSourceX"
+        app:layout_constraintTop_toBottomOf="@+id/coordinateSourceX" />
+
+    <TextView
+        android:id="@+id/txtCoordinateSourceZ"
+        android:layout_width="260dp"
+        android:layout_height="40dp"
+        android:layout_marginStart="15dp"
+        android:gravity="center|left"
+        android:text="Расстояние по Z, м"
+        android:textColor="@color/black"
+        android:textSize="16sp"
+        app:layout_constraintBottom_toBottomOf="@+id/coordinateSourceZ"
+        app:layout_constraintEnd_toStartOf="@+id/coordinateSourceZ"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="@+id/coordinateSourceZ" />
+
+    <EditText
+        android:id="@+id/coordinateSourceZ"
+        android:layout_width="125dp"
+        android:layout_height="40dp"
+        android:ems="10"
+        android:focusableInTouchMode="true"
+        android:hint="Расстояние Z"
+        android:inputType="numberDecimal"
+        android:textSize="16sp"
+        app:layout_constraintEnd_toEndOf="@+id/coordinateSourceY"
+        app:layout_constraintStart_toStartOf="@+id/coordinateSourceY"
+        app:layout_constraintTop_toBottomOf="@+id/coordinateSourceY" />
+
+
+    <androidx.recyclerview.widget.RecyclerView
+        android:id="@+id/recycler_view_source"
+        android:layout_width="409dp"
+        android:layout_height="256dp"
+        tools:listitem="@layout/item_main"
+        app:layout_constraintBottom_toTopOf="@+id/add_source"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/coordinateSourceZ"
+        app:layout_constraintVertical_bias="0.803"
+        />
+
+    <TextView
+        android:id="@+id/tv_empty"
+        android:layout_width="409dp"
+        android:layout_height="256dp"
+        android:gravity="center"
+        android:text="No Data Found"
+        android:textColor="@color/design_default_color_primary"
+        android:textSize="24sp"
+        android:textStyle="bold"
+        android:visibility="gone"
+        app:layout_constraintBottom_toTopOf="@+id/add_source"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/coordinateSourceZ"
+        app:layout_constraintVertical_bias="0.803" />
+
+    <Button
+        android:id="@+id/add_source"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="5dp"
+        android:onClick="onClick"
+        android:text="Добавить"
+        android:textSize="14sp"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent"
+        app:layout_constraintVertical_bias="0.976" />
+
+    <TextView
+        android:id="@+id/textView"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="Добавленные источники"
+        android:textColor="@color/black"
+        android:textSize="16sp"
+        app:layout_constraintBottom_toTopOf="@+id/recycler_view_source"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/txtCoordinateSourceZ"
+        app:layout_constraintVertical_bias="0.3" />
+
+</androidx.constraintlayout.widget.ConstraintLayout>

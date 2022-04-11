@@ -1,0 +1,198 @@
+<?xml version="1.0" encoding="utf-8"?>
+<androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:padding="16dp"
+    tools:layout_editor_absoluteX="0dp"
+    tools:layout_editor_absoluteY="20dp">
+
+    <ProgressBar
+        android:id="@+id/progressBar"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:visibility="gone"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent" />
+
+    <TextView
+        android:id="@+id/textView15"
+        android:layout_width="290dp"
+        android:layout_height="20dp"
+        android:gravity="center|left"
+        android:text="Количество тревог"
+        android:textColor="@color/black"
+        android:textSize="14dp"
+        app:layout_constraintBottom_toBottomOf="@+id/numberOfAlarms"
+        app:layout_constraintEnd_toStartOf="@+id/numberOfAlarms" />
+
+    <TextView
+        android:id="@+id/textView16"
+        android:layout_width="290dp"
+        android:layout_height="20dp"
+        android:gravity="center|left"
+        android:text="Количество перемещений"
+        android:textColor="@color/black"
+        android:textSize="14dp"
+        app:layout_constraintBottom_toBottomOf="@+id/numberOfMovementsResult"
+        app:layout_constraintEnd_toStartOf="@+id/numberOfMovementsResult" />
+
+    <TextView
+        android:id="@+id/textView17"
+        android:layout_width="290dp"
+        android:layout_height="20dp"
+        android:gravity="center|left"
+        android:text="Вероятность обнаружения, %"
+        android:textColor="@color/black"
+        android:textSize="14dp"
+        app:layout_constraintBottom_toBottomOf="@+id/detectionProbabilityResult"
+        app:layout_constraintEnd_toStartOf="@+id/detectionProbabilityResult" />
+
+    <TextView
+        android:id="@+id/textView18"
+        android:layout_width="290dp"
+        android:layout_height="20dp"
+        android:gravity="center|left"
+        android:text="Длительность, с"
+        android:textColor="@color/black"
+        android:textSize="14dp"
+        app:layout_constraintBottom_toBottomOf="@+id/duration"
+        app:layout_constraintEnd_toStartOf="@+id/duration" />
+
+    <TextView
+        android:id="@+id/textView19"
+        android:layout_width="290dp"
+        android:layout_height="20dp"
+        android:gravity="center|left"
+        android:text="Планируемая длительность, с"
+        android:textColor="@color/black"
+        android:textSize="14dp"
+        app:layout_constraintBottom_toBottomOf="@+id/plannedDuration"
+        app:layout_constraintEnd_toStartOf="@+id/plannedDuration" />
+
+    <TextView
+        android:id="@+id/numberOfAlarms"
+        android:layout_width="70dp"
+        android:layout_height="20dp"
+        android:gravity="center"
+        android:text="TextView"
+        android:textColor="@color/black"
+        android:textSize="14dp"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintTop_toTopOf="parent" />
+
+    <TextView
+        android:id="@+id/numberOfMovementsResult"
+        android:layout_width="70dp"
+        android:layout_height="20dp"
+        android:gravity="center"
+        android:text="TextView"
+        android:textColor="@color/black"
+        android:textSize="14dp"
+        app:layout_constraintEnd_toEndOf="@+id/numberOfAlarms"
+        app:layout_constraintStart_toStartOf="@+id/numberOfAlarms"
+        app:layout_constraintTop_toBottomOf="@+id/numberOfAlarms" />
+
+    <TextView
+        android:id="@+id/detectionProbabilityResult"
+        android:layout_width="70dp"
+        android:layout_height="20dp"
+        android:gravity="center"
+        android:text="TextView"
+        android:textColor="@color/black"
+        android:textSize="14dp"
+        app:layout_constraintEnd_toEndOf="@+id/numberOfMovementsResult"
+        app:layout_constraintHorizontal_bias="0.0"
+        app:layout_constraintStart_toStartOf="@+id/numberOfMovementsResult"
+        app:layout_constraintTop_toBottomOf="@+id/numberOfMovementsResult" />
+
+    <TextView
+        android:id="@+id/duration"
+        android:layout_width="70dp"
+        android:layout_height="20dp"
+        android:layout_marginTop="-1dp"
+        android:gravity="center"
+        android:text="TextView"
+        android:textColor="@color/black"
+        android:textSize="14dp"
+        app:layout_constraintEnd_toEndOf="@+id/detectionProbabilityResult"
+        app:layout_constraintHorizontal_bias="0.0"
+        app:layout_constraintStart_toStartOf="@+id/detectionProbabilityResult"
+        app:layout_constraintTop_toBottomOf="@+id/detectionProbabilityResult" />
+
+    <TextView
+        android:id="@+id/plannedDuration"
+        android:layout_width="70dp"
+        android:layout_height="20dp"
+        android:gravity="center"
+        android:text="TextView"
+        android:textColor="@color/black"
+        android:textSize="14dp"
+        app:layout_constraintEnd_toEndOf="@+id/duration"
+        app:layout_constraintStart_toStartOf="@+id/duration"
+        app:layout_constraintTop_toBottomOf="@+id/duration" />
+
+    <Button
+        android:id="@+id/detectionResult"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="Обнаружение"
+        android:textColor="@color/white"
+        android:textSize="14dp"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent"
+        app:layout_constraintVertical_bias="0.992" />
+
+    <ListView
+        android:id="@+id/sigmaResult"
+        android:layout_width="wrap_content"
+        android:layout_height="180dp"
+        android:layout_marginBottom="30dp"
+        app:layout_constraintBottom_toTopOf="@+id/detectorResult"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent"
+        app:layout_constraintVertical_bias="1.0"
+        tools:ignore="MissingConstraints" />
+
+    <ListView
+        android:id="@+id/detectorResult"
+        android:layout_width="wrap_content"
+        android:layout_height="180dp"
+        app:layout_constraintBottom_toTopOf="@+id/detectionResult"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent"
+        app:layout_constraintVertical_bias="1.0"
+        tools:ignore="MissingConstraints" />
+
+    <TextView
+        android:id="@+id/textView20"
+        android:layout_width="290dp"
+        android:layout_height="20dp"
+        android:layout_marginBottom="5dp"
+        android:textColor="@color/black"
+        android:textSize="14dp"
+        app:layout_constraintBottom_toTopOf="@+id/sigmaResult"
+        app:layout_constraintTop_toTopOf="parent"
+        app:layout_constraintVertical_bias="1.0"
+        tools:ignore="MissingConstraints"
+        tools:layout_editor_absoluteX="0dp" />
+
+    <TextView
+        android:id="@+id/textView21"
+        android:layout_width="290dp"
+        android:layout_height="20dp"
+        android:layout_marginBottom="5dp"
+        android:textColor="@color/black"
+        android:textSize="14dp"
+        app:layout_constraintBottom_toTopOf="@+id/detectorResult"
+        app:layout_constraintTop_toTopOf="parent"
+        app:layout_constraintVertical_bias="1.0"
+        tools:ignore="MissingConstraints"
+        tools:layout_editor_absoluteX="0dp" />
+
+</androidx.constraintlayout.widget.ConstraintLayout>

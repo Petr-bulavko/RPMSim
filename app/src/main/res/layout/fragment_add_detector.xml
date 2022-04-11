@@ -1,0 +1,199 @@
+<?xml version="1.0" encoding="utf-8"?>
+<androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:id="@+id/fragment_add_detector"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:background="?android:windowBackground">
+
+    <TextView
+        android:id="@+id/txtDetector"
+        android:layout_width="230dp"
+        android:layout_height="40dp"
+        android:layout_marginStart="15dp"
+        android:gravity="center|left"
+        android:text="Тип детектора"
+        android:textColor="@color/black"
+        android:textSize="16sp"
+        app:layout_constraintBottom_toBottomOf="@+id/spinner_detector"
+        app:layout_constraintEnd_toStartOf="@+id/spinner_detector"
+        app:layout_constraintHorizontal_bias="0.0"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="@+id/spinner_detector"
+        app:layout_constraintVertical_bias="0.0" />
+
+    <Spinner
+        android:id="@+id/spinner_detector"
+        android:layout_width="150dp"
+        android:layout_height="40dp"
+
+        android:layout_marginTop="16dp"
+
+        android:spinnerMode="dialog"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintHorizontal_bias="0.938"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent"
+        tools:ignore="MissingConstraints" />
+
+    <TextView
+        android:id="@+id/txtBackground"
+        android:layout_width="230dp"
+        android:layout_height="40dp"
+        android:layout_marginStart="15dp"
+        android:gravity="center|left"
+        android:text="Фон, имп/с"
+        android:textColor="@color/black"
+        android:textSize="16sp"
+        app:layout_constraintBottom_toBottomOf="@+id/background"
+        app:layout_constraintEnd_toStartOf="@+id/background"
+        app:layout_constraintHorizontal_bias="0.0"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="@+id/background"
+        app:layout_constraintVertical_bias="0.0" />
+
+    <EditText
+        android:id="@+id/background"
+        android:layout_width="150dp"
+        android:layout_height="40dp"
+        android:ems="10"
+        android:focusableInTouchMode="true"
+        android:hint="Фон"
+        android:inputType="numberDecimal"
+        android:textSize="16sp"
+        app:layout_constraintEnd_toEndOf="@+id/spinner_detector"
+        app:layout_constraintHorizontal_bias="0.0"
+        app:layout_constraintStart_toStartOf="@+id/spinner_detector"
+        app:layout_constraintTop_toBottomOf="@+id/spinner_detector" />
+
+    <TextView
+        android:id="@+id/txtDistanceX"
+        android:layout_width="230dp"
+        android:layout_height="40dp"
+        android:layout_marginStart="15dp"
+        android:layout_marginEnd="1dp"
+        android:gravity="center|left"
+        android:text="Расстояние по X, м"
+        android:textColor="@color/black"
+        android:textSize="16sp"
+        app:layout_constraintBottom_toBottomOf="@+id/distanceX"
+        app:layout_constraintEnd_toStartOf="@+id/distanceX"
+        app:layout_constraintHorizontal_bias="0.0"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="@+id/distanceX"
+        app:layout_constraintVertical_bias="0.0" />
+
+    <EditText
+        android:id="@+id/distanceX"
+        android:layout_width="150dp"
+        android:layout_height="40dp"
+        android:ems="10"
+        android:focusableInTouchMode="true"
+        android:hint="Расстояние X"
+        android:inputType="numberDecimal"
+        android:textSize="16sp"
+        app:layout_constraintEnd_toEndOf="@+id/background"
+        app:layout_constraintHorizontal_bias="0.0"
+        app:layout_constraintStart_toStartOf="@+id/background"
+        app:layout_constraintTop_toBottomOf="@+id/background" />
+
+    <TextView
+        android:id="@+id/txtDistanceY"
+        android:layout_width="230dp"
+        android:layout_height="40dp"
+        android:layout_marginStart="15dp"
+        android:gravity="center|left"
+        android:text="Расстояние по Y, м"
+        android:textColor="@color/black"
+        android:textSize="16sp"
+        app:layout_constraintBottom_toBottomOf="@+id/distanceY"
+        app:layout_constraintEnd_toStartOf="@+id/distanceY"
+        app:layout_constraintHorizontal_bias="0.0"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="@+id/distanceY"
+        app:layout_constraintVertical_bias="0.0" />
+
+    <EditText
+        android:id="@+id/distanceY"
+        android:layout_width="150dp"
+        android:layout_height="40dp"
+        android:ems="10"
+        android:focusableInTouchMode="true"
+        android:hint="Расстояние Y"
+        android:inputType="numberDecimal"
+        android:textSize="16sp"
+        app:layout_constraintEnd_toEndOf="@+id/distanceX"
+        app:layout_constraintHorizontal_bias="0.0"
+        app:layout_constraintStart_toStartOf="@+id/distanceX"
+        app:layout_constraintTop_toBottomOf="@+id/distanceX" />
+
+    <TextView
+        android:id="@+id/txtDistanceZ"
+        android:layout_width="230dp"
+        android:layout_height="40dp"
+        android:layout_marginStart="15dp"
+        android:gravity="center|left"
+        android:text="Расстояние по Z, м"
+        android:textColor="@color/black"
+        android:textSize="16sp"
+        app:layout_constraintBottom_toBottomOf="@+id/distanceZ"
+        app:layout_constraintEnd_toStartOf="@+id/distanceZ"
+        app:layout_constraintHorizontal_bias="0.0"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="@+id/distanceZ"
+        app:layout_constraintVertical_bias="0.0" />
+
+    <EditText
+        android:id="@+id/distanceZ"
+        android:layout_width="150dp"
+        android:layout_height="40dp"
+        android:ems="10"
+        android:focusableInTouchMode="true"
+        android:hint="Расстояние Z"
+        android:inputType="numberDecimal"
+        android:textSize="16sp"
+        app:layout_constraintEnd_toEndOf="@+id/distanceY"
+        app:layout_constraintHorizontal_bias="0.0"
+        app:layout_constraintStart_toStartOf="@+id/distanceY"
+        app:layout_constraintTop_toBottomOf="@+id/distanceY" />
+
+    <TextView
+        android:id="@+id/txtSensitivity"
+        android:layout_width="255dp"
+        android:layout_height="40dp"
+        android:gravity="center|left"
+        android:text="Чувствительность"
+        android:textColor="@color/black"
+        android:textSize="16sp"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintHorizontal_bias="0.096"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/txtDistanceZ"
+        app:layout_constraintVertical_bias="0.0" />
+
+    <ListView
+        android:id="@+id/sensitivity"
+        android:layout_width="wrap_content"
+        android:layout_height="270dp"
+        app:layout_constraintBottom_toTopOf="@+id/add_detector"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintHorizontal_bias="1.0"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/txtSensitivity"
+        app:layout_constraintVertical_bias="0.312" />
+
+    <Button
+        android:id="@+id/add_detector"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="5dp"
+        android:onClick="onClick"
+        android:text="Добавить"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent"
+        app:layout_constraintVertical_bias="0.976" />
+</androidx.constraintlayout.widget.ConstraintLayout>

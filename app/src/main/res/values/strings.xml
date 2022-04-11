@@ -1,0 +1,8 @@
+<resources>
+    <string name="app_name">RPMSim</string>
+    <string-array name="background_mode">
+        <item>Адаптивный</item>
+        <item>Постоянный</item>
+        <item>Вручную</item>
+    </string-array>
+</resources>
