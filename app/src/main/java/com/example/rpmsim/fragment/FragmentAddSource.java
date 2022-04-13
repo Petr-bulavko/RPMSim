@@ -5,6 +5,7 @@ import android.content.Intent;
 import android.database.Cursor;
 import android.database.sqlite.SQLiteDatabase;
 import android.os.Bundle;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -33,6 +34,8 @@ import java.util.ArrayList;
 import java.util.Locale;
 
 public class FragmentAddSource extends Fragment implements View.OnClickListener {
+
+    final String LOG_TAG = "myLogs";
 
     private EditText txtCoefficient, activitySource, coordinateSourceX, coordinateSourceY, coordinateSourceZ;
     private Button addSource;
@@ -66,6 +69,9 @@ public class FragmentAddSource extends Fragment implements View.OnClickListener 
     @Override
     public View onCreateView(@NonNull LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
         View result = inflater.inflate(R.layout.fragment_add_source, container, false);
+
+        Log.d(LOG_TAG, "onCreateView_fragment_add_source");
+
         txtCoefficient = result.findViewById(R.id.coefficient);
         activitySource = result.findViewById(R.id.activitySource);
         activitySource.setText("0");
@@ -117,6 +123,8 @@ public class FragmentAddSource extends Fragment implements View.OnClickListener 
     public void onResume() {
         super.onResume();
 
+        Log.d(LOG_TAG, "onResume_fragment_add_source");
+
         db = databaseHelper.open();
 
         cursor_source = db.rawQuery("select * from " + Constants.TABLE_SOURCE, null);
@@ -160,6 +168,7 @@ public class FragmentAddSource extends Fragment implements View.OnClickListener 
     @Override
     public void onDestroy() {
         super.onDestroy();
+        Log.d(LOG_TAG, "onDestroy_fragment_add_source");
         db.close();
         cursor_source.close();
         cursor.close();
@@ -168,6 +177,8 @@ public class FragmentAddSource extends Fragment implements View.OnClickListener 
     @SuppressLint({"Range", "DefaultLocale"})
     @Override
     public void onClick(View v) {
+        Log.d(LOG_TAG, "onClick_fragment_add_source");
+
         double x = Double.parseDouble(coordinateSourceX.getText().toString());
         double y = Double.parseDouble(coordinateSourceY.getText().toString());
         double z = Double.parseDouble(coordinateSourceZ.getText().toString());
@@ -204,11 +215,13 @@ public class FragmentAddSource extends Fragment implements View.OnClickListener 
     @Override
     public void onSaveInstanceState(@NonNull Bundle outState) {
         super.onSaveInstanceState(outState);
+        Log.d(LOG_TAG, "onSaveInstanceState_fragment_add_source");
     }
 
     //Думаю когда мы переходим в другой фрагмент, срабатывает этот метод
     @Override
     public void onPause() {
         super.onPause();
+        Log.d(LOG_TAG, "onPause_fragment_add_source");
     }
 }

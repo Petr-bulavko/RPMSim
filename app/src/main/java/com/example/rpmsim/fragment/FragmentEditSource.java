@@ -4,6 +4,7 @@ import android.annotation.SuppressLint;
 import android.database.Cursor;
 import android.database.sqlite.SQLiteDatabase;
 import android.os.Bundle;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -29,6 +30,8 @@ import java.util.Locale;
 
 public class FragmentEditSource extends Fragment implements View.OnClickListener {
 
+    final String LOG_TAG = "myLogs";
+
     private EditText editCoefficient, editActivitySource, editCoordinateSourceX, editCoordinateSourceY, editCoordinateSourceZ;
     private TextView txtCoefficientEdit;
     private Spinner spinner_source_edit;
@@ -46,6 +49,7 @@ public class FragmentEditSource extends Fragment implements View.OnClickListener
     @Override
     public View onCreateView(@NonNull LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
         View result = inflater.inflate(R.layout.fragment_edit_source, container, false);
+        Log.d(LOG_TAG, "onCreateView_fragment_edit_source");
         txtCoefficientEdit = result.findViewById(R.id.txtCoefficientEdit);
         editCoefficient = result.findViewById(R.id.editCoefficient);
         editActivitySource = result.findViewById(R.id.editActivitySource);
@@ -111,6 +115,7 @@ public class FragmentEditSource extends Fragment implements View.OnClickListener
     @Override
     public void onResume() {
         super.onResume();
+        Log.d(LOG_TAG, "onResume_fragment_edit_source");
         db = databaseHelper.open();
 
         cursor_source = db.rawQuery("select * from " + Constants.TABLE_SOURCE, null);
@@ -128,12 +133,14 @@ public class FragmentEditSource extends Fragment implements View.OnClickListener
     @Override
     public void onDestroy() {
         super.onDestroy();
+        Log.d(LOG_TAG, "onDestroy_fragment_edit_source");
         db.close();
         cursor_source.close();
     }
 
     @Override
     public void onClick(View v) {
+        Log.d(LOG_TAG, "onClick_fragment_edit_source");
         if (nameSource != null){
             sources.get(positionInRecycler).setNameSource(nameSource);
         }

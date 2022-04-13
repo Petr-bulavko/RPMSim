@@ -2,6 +2,7 @@ package com.example.rpmsim.fragment;
 
 import android.annotation.SuppressLint;
 import android.os.Bundle;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -26,6 +27,8 @@ import org.apache.commons.math3.distribution.PoissonDistribution;
 import java.util.ArrayList;
 
 public class FragmentResult extends Fragment implements View.OnClickListener {
+
+    final String LOG_TAG = "myLogs";
 
     private TextView numberOfAlarms, numberOfMovementsResult, detectionProbabilityResult, duration, plannedDuration, textView20, textView21;
     private ListView sigmaResult;
@@ -66,6 +69,7 @@ public class FragmentResult extends Fragment implements View.OnClickListener {
     @Override
     public View onCreateView(@NonNull LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
         View result = inflater.inflate(R.layout.fragment_result, container, false);
+        Log.d(LOG_TAG, "onCreateView_fragment_result");
         numberOfAlarms = result.findViewById(R.id.numberOfAlarms);
         numberOfAlarms.setText("0");
         numberOfMovementsResult = result.findViewById(R.id.numberOfMovementsResult);
@@ -92,6 +96,8 @@ public class FragmentResult extends Fragment implements View.OnClickListener {
     @SuppressLint("DefaultLocale")
     @Override
     public void onClick(View v) {
+
+        Log.d(LOG_TAG, "onClick_fragment_result");
         //Пока хз, чего он не работает
         progressBar.setVisibility(View.VISIBLE);
 
@@ -143,108 +149,13 @@ public class FragmentResult extends Fragment implements View.OnClickListener {
             //Цикл по милисекундно
             for (int j = 0; j < time; j++) {
                 sourceStartPointX += distanceInMilliSecond;
-
-                //Записываем чувствительность
-                double sensitivity_write;
-                //Записываем геометрию
-                double geometrical_write;
-
-                //Считаем sumCountRate для детекторов
-                for (int k = 0; k < detectors.size(); k++) {
-                    sensitivity_write = detectors.get(k).getSensitivity().get(0);
-                    geometrical_write = detectors.get(k).getGeometricalSizes();
-
-                    //Точечный детектор
-                    if (geometrical_write == 0 && sensitivity_write != 0) {
-                        for (int s = 0; s < sources.size(); s++) {
-                            sourceDistance = alarmClass.calcDistance(sourceStartPointX, detectors.get(k).getX(),
-                                    sources.get(s).getCoordinateSourceY(),
-                                    detectors.get(k).getY(), sources.get(s).getCoordinateSourceZ(), detectors.get(k).getZ());
-                            sourceStartPointX += distanceInMilliSecond;
-                            doseRate = alarmClass.calcDoseRate(sources.get(s).getActivitySource(), sourceDistance,
-                                    sources.get(s).getCoefficient());
-                            countRate = alarmClass.calcCountRate(doseRate, detectors.get(k).getSensitivity().get(sources.get(s).getPositionInSpinner()));
-
-                            PoissonDistribution poissonDistribution = new PoissonDistribution(countRate);
-                            sumCountRate += poissonDistribution.sample();
-                        }
-                        //Изотропный детектор
-                    } else if (geometrical_write == 0.4 && sensitivity_write != 0) {
-                        //Т.к. детектор изотропный и геометрия для него 0,4, то разбиваем этот детектор на 8 частей
-                        //Делим на 16 чтобы получить расстояние до центра
-                        double xz = detectors.get(k).getGeometricalSizes() / 16;
-
-                        //Чтобы не проходить цикл 8 раз будем сразу записывать значения снизу и сверху
-                        double sumCountRateTop = 0;
-                        double sumCountRateBottom = 0;
-
-                        //xz * xzi чтобы получить центр каждой части
-                        int xzi = 1;
-
-                        //Т.к. записываем значения сверху и снизу, то цикл до 4
-                        for (int f = 0; f < 4; f++) {
-                            for (int s = 0; s < sources.size(); s++) {
-                                sourceDistance = alarmClass.calcDistance(sourceStartPointX, detectors.get(k).getX(),
-                                        sources.get(s).getCoordinateSourceY(),
-                                        detectors.get(k).getY(), sources.get(s).getCoordinateSourceZ(), (detectors.get(k).getZ() - xz * xzi));
-
-                                sourceStartPointX += distanceInMilliSecond;
-                                doseRate = alarmClass.calcDoseRate(sources.get(s).getActivitySource(), sourceDistance,
-                                        sources.get(s).getCoefficient());
-
-                                //Т.к. мы детектор разбиваем на 8 частей то и чувствительнось будем в 8 раз меньше для каждой части
-                                countRate = alarmClass.calcCountRate(doseRate, detectors.get(k).getSensitivity().get(sources.get(s).getPositionInSpinner())) / 8;
-
-                                PoissonDistribution poissonDistribution = new PoissonDistribution(countRate);
-                                sumCountRateTop += poissonDistribution.sample();
-                                sumCountRateBottom += poissonDistribution.sample();
-                                sumCountRate += sumCountRateTop + sumCountRateBottom;
-                            }
-                            xzi += 2;
-                        }
-
-                        //Изотропный детектор
-                    } else if (geometrical_write == 1 && sensitivity_write != 0) {
-                        //Т.к. детектор изотропный и геометрия для него 1, то разбиваем этот детектор на 10 частей
-                        //Делим на 20 чтобы получить расстояние до центра
-                        double xz = detectors.get(k).getGeometricalSizes() / 20;
-
-                        //Чтобы не проходить цикл 10 раз будем сразу записывать значения снизу и сверху
-                        double sumCountRateTop = 0;
-                        double sumCountRateBottom = 0;
-
-                        //Так как делим на 10 частей, то начинаем цикл с 0 до 5
-                        int xzi = 1;
-
-                        //Т.к. записываем значения сверху и снизу, то цикл до 5
-                        for (int f = 0; f < 5; f++) {
-                            for (int s = 0; s < sources.size(); s++) {
-                                sourceDistance = alarmClass.calcDistance(sourceStartPointX, detectors.get(k).getX(),
-                                        sources.get(s).getCoordinateSourceY(),
-                                        detectors.get(k).getY(), sources.get(s).getCoordinateSourceZ(), (detectors.get(k).getZ() - xz * xzi));
-
-                                sourceStartPointX += distanceInMilliSecond;
-                                doseRate = alarmClass.calcDoseRate(sources.get(s).getActivitySource(), sourceDistance,
-                                        sources.get(s).getCoefficient());
-
-                                //Т.к. мы детектор разбиваем на 10 частей то и чувствительнось будем в 10 раз меньше для каждой части
-                                countRate = alarmClass.calcCountRate(doseRate, detectors.get(k).getSensitivity().get(sources.get(s).getPositionInSpinner())) / 10;
-
-                                PoissonDistribution poissonDistribution = new PoissonDistribution(countRate);
-                                sumCountRateTop += poissonDistribution.sample();
-                                sumCountRateBottom += poissonDistribution.sample();
-                                sumCountRate += sumCountRateTop + sumCountRateBottom;
-                            }
-                            xzi += 2;
-                        }
-                    }
-                }
-
+                sumCountRate += calcCountRate(detectors, sources, alarmClass, sourceStartPointX);
                 count++;
                 if (count == holdingTime) {
                     alarm = alarmClass.calcAlarm(backgroundMode, alarm, sumCountRate);
                     sumCountRate = 0;
                     count = 0;
+                    countTime++;
                 }
                 if (interrupt) if (alarm) break;
             }
@@ -270,7 +181,7 @@ public class FragmentResult extends Fragment implements View.OnClickListener {
         //Пока хз
         detectionProbabilityResult.setText("");
         //Надо еще подумать
-        duration.setText(String.format("%d", countTime / 10));
+        duration.setText(String.format("%d", countTime));
         //результат в с
         plannedDuration.setText(String.format("%.0f", time / 1000 * numberOfMovements));
 
@@ -280,6 +191,7 @@ public class FragmentResult extends Fragment implements View.OnClickListener {
     //Метод для вывода сигм
     @SuppressLint("DefaultLocale")
     public void sigma_derivation(ArrayList<Double> sigma, ArrayList<Double> alarm) {
+        Log.d(LOG_TAG, "sigma_derivation_fragment_result");
         String[] sigma_array = new String[sigma.size()];
         for (int i = 0; i < sigma.size(); i++) {
             sigma_array[i] = String.format("σ - %.2f - кол-во тревог: %.0f", sigma.get(i), alarm.get(i));
@@ -291,40 +203,139 @@ public class FragmentResult extends Fragment implements View.OnClickListener {
     //Метод для вывода значений детектора
     @SuppressLint("DefaultLocale")
     public void detectors_derivation() {
+        Log.d(LOG_TAG, "detectors_derivation_fragment_result");
         double sourceDistance;
-        double doseRate;
-        double countRate;
+        double doseRate = 0;
+        double countRate = 0;
         double sensitivity_number;
         int number_source;
         Alarm alarm = new Alarm();
         ArrayList<String> arrayList = new ArrayList<>();
         for (int i = 0; i < detectors.size(); i++) {
-            sourceDistance = alarm.calcDistance(sources.get(0).getCoordinateSourceX(), detectors.get(i).getX(),
-                    sources.get(0).getCoordinateSourceY(),
-                    detectors.get(i).getY(), sources.get(0).getCoordinateSourceZ(), detectors.get(i).getZ());
             for (int j = 0; j < sources.size(); j++) {
-                //Т.к. источник находится на постоянной точке, то лучше его перенести на 1 строку вверх
-                //Пока для г и нейтрон/с расчет не верен
 
-                number_source = sources.get(j).getPositionInSpinner();
-                doseRate = alarm.calcDoseRate(sources.get(j).getActivitySource(), sourceDistance, sources.get(j).getCoefficient());
-                sensitivity_number = detectors.get(i).getSensitivity().get(number_source);
-                if (sensitivity_number != 0) {
-                    countRate = alarm.calcCountRate(doseRate, sensitivity_number);
-                } else {
-                    countRate = 0;
+                double sumCountRateTop = 0;
+                double sumCountRateBottom = 0;
 
+                double part = detector_geometrical(detectors.get(i));
+                double xz = detectors.get(i).getGeometricalSizes() / (part * 2);
+                int xzi = 1;
+
+                for (int d = 0; d < Math.ceil(part / 2); d++) {
+                    sourceDistance = alarm.calcDistance(sources.get(0).getCoordinateSourceX(), detectors.get(i).getX(),
+                            sources.get(0).getCoordinateSourceY(),
+                            detectors.get(i).getY(), sources.get(0).getCoordinateSourceZ(), (detectors.get(i).getZ() - xz * xzi));
+
+                    number_source = sources.get(j).getPositionInSpinner();
+
+                    if (sources.get(j).getNameSource().equals("Cf-252") || sources.get(j).getNameSource().equals("PuBe")) {
+                        //Считает нормально, умножаем на 10^(10) так как коэф. полностью не выводится и делим на 10^(3)
+                        doseRate = alarm.calcDoseRate(sources.get(j).getActivitySource(), sourceDistance, sources.get(j).getCoefficient()) * sourceDistance * Math.pow(10, 1);//79577471545.9477
+                    } else {
+                        doseRate = alarm.calcDoseRate(sources.get(j).getActivitySource(), sourceDistance, sources.get(j).getCoefficient());
+                    }
+
+                    if (sources.get(j).getNameSource().equals("Cf-252") || sources.get(j).getNameSource().equals("PuBe")){
+                        sensitivity_number = detectors.get(i).getSensitivity().get(number_source) / part * Math.pow(10, -1);
+                    }else {
+                        sensitivity_number = detectors.get(i).getSensitivity().get(number_source) / part;
+                    }
+
+                    if (sensitivity_number != 0) {
+                        if (Math.ceil(part / 2) == 1) {
+                            countRate = alarm.calcCountRate(doseRate, sensitivity_number);
+                        } else {
+                            sumCountRateTop = alarm.calcCountRate(doseRate, sensitivity_number);
+                            sumCountRateBottom = alarm.calcCountRate(doseRate, sensitivity_number);
+                            countRate += sumCountRateTop + sumCountRateBottom;
+                        }
+
+                    } else {
+                        countRate = 0;
+                    }
+                    xzi += 2;
                 }
                 arrayList.add(String.format("%s - (%s) - %.4f | %.1f", detectors.get(i).getNameDetector(), sources.get(j).getNameSource(), doseRate * Math.pow(10, 6), countRate));
+                countRate = 0;
             }
         }
         ArrayAdapter<String> adapter1 = new ArrayAdapter<>(getActivity(), android.R.layout.simple_list_item_1, arrayList);
         detectorResult.setAdapter(adapter1);
     }
 
+    public double detector_geometrical(Detector detector) {
+        Log.d(LOG_TAG, "detector_geometrical_fragment_result");
+        if (detector.getGeometricalSizes() == 0) {
+            return 1;
+        } else if (detector.getGeometricalSizes() == 0.4) {
+            return 8;
+        } else {
+            return 10;
+        }
+    }
+
+    public double calcCountRate(ArrayList<Detector> detectors, ArrayList<Source> sources, Alarm alarm, double sourceStartPointX){
+        PoissonDistribution poissonDistribution;
+        int number_source;
+        double sourceDistance;
+        double sumCountRate = 0;
+        double doseRate;
+        double sensitivity_number;
+        double sumCountRateTop;
+        double sumCountRateBottom;
+        double countRate = 0;
+
+        for (int i = 0; i < detectors.size(); i++) {
+            for (int j = 0; j < sources.size(); j++) {
+                double part = detector_geometrical(detectors.get(i));
+                double xz = detectors.get(i).getGeometricalSizes() / (part * 2);
+                int xzi = 1;
+
+                for (int d = 0; d < Math.ceil(part / 2); d++) {
+                    sourceDistance = alarm.calcDistance(sourceStartPointX, detectors.get(i).getX(),
+                            sources.get(0).getCoordinateSourceY(),
+                            detectors.get(i).getY(), sources.get(0).getCoordinateSourceZ(), (detectors.get(i).getZ() - xz * xzi));
+
+                    number_source = sources.get(j).getPositionInSpinner();
+
+                    if (sources.get(j).getNameSource().equals("Cf-252") || sources.get(j).getNameSource().equals("PuBe")) {
+                        doseRate = alarm.calcDoseRate(sources.get(j).getActivitySource(), sourceDistance, sources.get(j).getCoefficient()) * sourceDistance * Math.pow(10, 7);//79577471545.9477
+                    } else {
+                        doseRate = alarm.calcDoseRate(sources.get(j).getActivitySource(), sourceDistance, sources.get(j).getCoefficient());
+                    }
+
+                    if (sources.get(j).getNameSource().equals("Cf-252") || sources.get(j).getNameSource().equals("PuBe")){
+                        sensitivity_number = detectors.get(i).getSensitivity().get(number_source) / part * Math.pow(10,-6);
+                    }else {
+                        sensitivity_number = detectors.get(i).getSensitivity().get(number_source) / part;
+                    }
+
+                    if (sensitivity_number != 0) {
+                        if (Math.ceil(part / 2) == 1) {
+                            countRate = alarm.calcCountRate(doseRate, sensitivity_number);
+                            poissonDistribution = new PoissonDistribution(countRate);
+                            sumCountRate += poissonDistribution.sample();
+                        } else {
+                            countRate = alarm.calcCountRate(doseRate, sensitivity_number);
+                            poissonDistribution = new PoissonDistribution(countRate);
+                            sumCountRateTop = poissonDistribution.sample();
+                            sumCountRateBottom = poissonDistribution.sample();
+                            sumCountRate += sumCountRateTop + sumCountRateBottom;
+                        }
+                    } else {
+                        continue;
+                    }
+                    xzi += 2;
+                }
+            }
+        }
+        return sumCountRate;
+    }
+
     @Override
     public void onResume() {
         super.onResume();
+        Log.d(LOG_TAG, "onResume_fragment_result");
         //Значения передаю цепочкой, но пока хз как лучше и как оно работает
         getParentFragmentManager().setFragmentResultListener("request_all", this, (requestKey, result) -> {
             holdingTime = result.getDouble("txtHoldingTime");
@@ -345,116 +356,3 @@ public class FragmentResult extends Fragment implements View.OnClickListener {
         });
     }
 }
-
-//Если надо будет вернуть первоночальное решение
-//            if (detector.getGeometricalSizes() == 0) {
-//                for (int i = 0; i < time; i++) {
-//
-//                    //Может как то красивше сделать
-//                    if (interrupt)
-//                        if (alarm) {
-//                            countAlarm++;
-//                            break;
-//                        }
-//
-//                    sourceDistance = alarmClass.calcDistance(sourceStartPointX, detector.getX(),
-//                            source.getCoordinateSourceY(),
-//                            detector.getY(), source.getCoordinateSourceZ(), detector.getZ());
-//                    sourceStartPointX += distanceInMilliSecond;
-//                    doseRate = alarmClass.calcDoseRate(source.getActivitySource(), sourceDistance,
-//                            source.getCoefficient());
-//                    countRate = alarmClass.calcCountRate(doseRate, detector.getSensitivity().get(0));
-//
-//                    PoissonDistribution poissonDistribution = new PoissonDistribution(countRate);
-//                    sumCountRate += poissonDistribution.sample();
-//
-//                    count++;
-//                    if (count == holdingTime) {
-//                        alarm = alarmClass.calcAlarm(backgroundMode, alarm, sumCountRate);
-//                        countTime++;
-//                        sumCountRate = 0;
-//                        count = 0;
-//                    }
-//                }
-//            } else if (detector.getGeometricalSizes() == 0.4) {
-//                //Вроде бы разбил на 8 частей
-//                double xz = detector.getGeometricalSizes() / 16;
-//                double sumCountRateTop = 0;
-//                double sumCountRateBottom = 0;
-//                int xzi = 1;
-//                for (int j = 0; j < time; j++) {
-//                    for (int i = 1; i <= 4; i++) {
-//                        sourceDistance = alarmClass.calcDistance(sourceStartPointX, detector.getX(),
-//                                source.getCoordinateSourceY(),
-//                                detector.getY(), source.getCoordinateSourceZ(), (detector.getZ() - xz * xzi));
-//
-//                        sourceStartPointX += distanceInMilliSecond;
-//                        doseRate = alarmClass.calcDoseRate(source.getActivitySource(), sourceDistance,
-//                                source.getCoefficient());
-//                        //Делим на 8 т.е. получаем 1 часть
-//                        countRate = alarmClass.calcCountRate(doseRate, detector.getSensitivity().get(0)) / 8;
-//
-//                        PoissonDistribution poissonDistribution = new PoissonDistribution(countRate);
-//                        sumCountRateTop += poissonDistribution.sample();
-//                        sumCountRateBottom += poissonDistribution.sample();
-//                        sumCountRate += sumCountRateTop + sumCountRateBottom;
-//
-//                        xzi += 2;
-//                    }
-//
-//                    count++;
-//                    if (count == holdingTime) {
-//                        alarm = alarmClass.calcAlarm(backgroundMode, alarm, sumCountRate);
-//                        countTime++;
-//                        sumCountRate = 0;
-//                        count = 0;
-//                    }
-//                    if (interrupt)
-//                        if (alarm) {
-//                            countAlarm++;
-//                            break;
-//                        }
-//                }
-//
-//            } else if (detector.getGeometricalSizes() == 1) {
-//                //Вроде бы разбил на 10 частей
-//                double xz = detector.getGeometricalSizes() / 20;
-//                double sumCountRateTop = 0;
-//                double sumCountRateBottom = 0;
-//                //Так как делим на 10 частей, то начинаем цикл с 0 до 5
-//                int xzi = 1;
-//                for (int j = 0; j < time; j++) {
-//                    for (int i = 0; i < 5; i++) {
-//                        sourceDistance = alarmClass.calcDistance(sourceStartPointX, detector.getX(),
-//                                source.getCoordinateSourceY(),
-//                                detector.getY(), source.getCoordinateSourceZ(), (detector.getZ() - xz * xzi));
-//
-//                        sourceStartPointX += distanceInMilliSecond;
-//                        doseRate = alarmClass.calcDoseRate(source.getActivitySource(), sourceDistance,
-//                                source.getCoefficient());
-//                        //Делим на 10 т.е. получаем 1 часть
-//                        countRate = alarmClass.calcCountRate(doseRate, detector.getSensitivity().get(0)) / 10;
-//
-//                        PoissonDistribution poissonDistribution = new PoissonDistribution(countRate);
-//                        sumCountRateTop += poissonDistribution.sample();
-//                        sumCountRateBottom += poissonDistribution.sample();
-//                        sumCountRate += sumCountRateTop + sumCountRateBottom;
-//
-//                        xzi += 2;
-//                    }
-//                    count++;
-//                    if (count == holdingTime) {
-//                        alarm = alarmClass.calcAlarm(backgroundMode, alarm, sumCountRate);
-//                        countTime++;
-//                        sumCountRate = 0;
-//                        count = 0;
-//                    }
-//
-//                    if (interrupt)
-//                        if (alarm) {
-//                            countAlarm++;
-//                            break;
-//                        }
-//                }
-//
-//            }

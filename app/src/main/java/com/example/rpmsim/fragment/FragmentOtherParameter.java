@@ -2,6 +2,7 @@ package com.example.rpmsim.fragment;
 
 import android.annotation.SuppressLint;
 import android.os.Bundle;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -23,6 +24,8 @@ import java.util.ArrayList;
 
 public class FragmentOtherParameter extends Fragment implements View.OnClickListener {
 
+    final String LOG_TAG = "myLogs";
+
     EditText txtHoldingTime, txtTravelSpeedSource, txtSourcePathLength, txtNumberOfMovements, txtNumberOfThresholds, txtWorkingArray,
             txtBackgroundArray, txtUnusedThresholds, txtFalseAlarmPeriod, txtDetectionProbability, txtFalseAlarmRate;
     CheckBox txtInterrupt;
@@ -35,6 +38,7 @@ public class FragmentOtherParameter extends Fragment implements View.OnClickList
     @Override
     public View onCreateView(@NonNull LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
         View result = inflater.inflate(R.layout.fragment_other_parameter, container, false);
+        Log.d(LOG_TAG, "onCreateView_fragment_other_parameter");
 
         txtHoldingTime = result.findViewById(R.id.holdingTime);
         txtHoldingTime.setText("100");//Время выдержки БД
@@ -84,9 +88,8 @@ public class FragmentOtherParameter extends Fragment implements View.OnClickList
     @Override
     public void onResume() {
         super.onResume();
+        Log.d(LOG_TAG, "onResume_fragment_other_parameter");
 
-        //Оооооо это работает, но только для одного фрагмента, это проблема
-        //Передать значения цепочкой?
         getParentFragmentManager().setFragmentResultListener("request_sources_and_detectors", this, new FragmentResultListener() {
             @Override
             public void onFragmentResult(@NonNull String requestKey, @NonNull Bundle result) {
@@ -100,6 +103,7 @@ public class FragmentOtherParameter extends Fragment implements View.OnClickList
     @Override
     public void onPause() {
         super.onPause();
+        Log.d(LOG_TAG, "onPause_fragment_other_parameter");
         Bundle bundle = new Bundle();
         bundle.putDouble("txtHoldingTime", Double.parseDouble(txtHoldingTime.getText().toString()));
         bundle.putDouble("txtTravelSpeedSource", Double.parseDouble(txtTravelSpeedSource.getText().toString()));
@@ -128,6 +132,7 @@ public class FragmentOtherParameter extends Fragment implements View.OnClickList
     @SuppressLint("DefaultLocale")
     @Override
     public void onClick(View v) {
+        Log.d(LOG_TAG, "onClick_fragment_other_parameter");
         double update = Double.parseDouble(txtFalseAlarmRate.getText().toString()) * Double.parseDouble(txtSourcePathLength.getText().toString());
         txtFalseAlarmPeriod.setText(String.format("%.0f", update));
     }

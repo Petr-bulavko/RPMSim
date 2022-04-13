@@ -4,6 +4,7 @@ import android.annotation.SuppressLint;
 import android.database.Cursor;
 import android.database.sqlite.SQLiteDatabase;
 import android.os.Bundle;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -31,6 +32,8 @@ import java.util.Locale;
 import java.util.Objects;
 
 public class FragmentEditDetector extends Fragment implements View.OnClickListener{
+
+    final String LOG_TAG = "myLogs";
 
     private EditText backgroundEdit, distanceXEdit, distanceYEdit, distanceZEdit;
     private RecyclerView recyclerView;
@@ -63,7 +66,7 @@ public class FragmentEditDetector extends Fragment implements View.OnClickListen
     @Override
     public View onCreateView(@NonNull LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
         View result = inflater.inflate(R.layout.fragment_edit_detector, container, false);
-
+        Log.d(LOG_TAG, "onCreateView_fragment_edit_detector");
         backgroundEdit = result.findViewById(R.id.backgroundEdit);
         distanceXEdit = result.findViewById(R.id.distanceXEdit);
         distanceYEdit = result.findViewById(R.id.distanceYEdit);
@@ -147,6 +150,8 @@ public class FragmentEditDetector extends Fragment implements View.OnClickListen
     public void onResume() {
         super.onResume();
 
+        Log.d(LOG_TAG, "onResume_fragment_edit_detector");
+
         db = databaseHelper.open();
         cursor_detector = db.rawQuery("select * from " + Constants.TABLE_DETECTOR, null);
 
@@ -164,6 +169,7 @@ public class FragmentEditDetector extends Fragment implements View.OnClickListen
     @Override
     public void onDestroy() {
         super.onDestroy();
+        Log.d(LOG_TAG, "onDestroy_fragment_edit_detector");
         db.close();
         cursor_detector.close();
         cursor_sensitivity.close();
@@ -173,6 +179,7 @@ public class FragmentEditDetector extends Fragment implements View.OnClickListen
 
     @Override
     public void onClick(View v) {
+        Log.d(LOG_TAG, "onClick_fragment_edit_detector");
         EditDetectorAdapter editDetectorAdapter = (EditDetectorAdapter) recyclerView.getAdapter();
         ArrayList<Double> arrayList = Objects.requireNonNull(editDetectorAdapter).getArraySensitivity();
 

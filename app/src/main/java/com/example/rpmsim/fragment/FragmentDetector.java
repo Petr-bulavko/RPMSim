@@ -2,6 +2,7 @@ package com.example.rpmsim.fragment;
 
 import android.annotation.SuppressLint;
 import android.os.Bundle;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -22,6 +23,8 @@ import java.util.ArrayList;
 
 public class FragmentDetector extends Fragment {
 
+    final String LOG_TAG = "myLogs";
+
     private RecyclerView recycler_view_detector;
 
     ArrayList<Detector> detectors = new ArrayList<>();
@@ -31,6 +34,7 @@ public class FragmentDetector extends Fragment {
     @Override
     public View onCreateView(@NonNull LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
         View result = inflater.inflate(R.layout.fragment_detector, container, false);
+        Log.d(LOG_TAG, "onCreateView_fragment_detector");
         recycler_view_detector = result.findViewById(R.id.recycler_view_detector);
         Button addNewDetector = result.findViewById(R.id.addNewDetector);
 
@@ -58,6 +62,8 @@ public class FragmentDetector extends Fragment {
     public void onResume() {
         super.onResume();
 
+        Log.d(LOG_TAG, "onResume_fragment_detector");
+
         Bundle args = getArguments();
         if (args != null) {
             detectors = (ArrayList<Detector>) args.getSerializable("detectors");
@@ -83,5 +89,6 @@ public class FragmentDetector extends Fragment {
     @Override
     public void onPause() {
         super.onPause();
+        Log.d(LOG_TAG, "onPause_fragment_detector");
     }
 }

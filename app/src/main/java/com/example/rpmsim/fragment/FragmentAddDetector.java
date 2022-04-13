@@ -5,6 +5,7 @@ import android.content.Context;
 import android.database.Cursor;
 import android.database.sqlite.SQLiteDatabase;
 import android.os.Bundle;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -35,6 +36,8 @@ import java.util.Objects;
 
 public class FragmentAddDetector extends Fragment implements View.OnClickListener {
 
+    final String LOG_TAG = "myLogs";
+
     private EditText background, distanceX, distanceY, distanceZ;
     private Button addNewDetector;
     private ListView listView;
@@ -61,7 +64,7 @@ public class FragmentAddDetector extends Fragment implements View.OnClickListene
     @Override
     public View onCreateView(@NonNull LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
         View result = inflater.inflate(R.layout.fragment_add_detector, container, false);
-
+        Log.d(LOG_TAG, "onCreateView_fragment_add_detector");
 
         spinner_detector = result.findViewById(R.id.spinner_detector);
         background = result.findViewById(R.id.background);
@@ -124,6 +127,8 @@ public class FragmentAddDetector extends Fragment implements View.OnClickListene
     public void onResume() {
         super.onResume();
 
+        Log.d(LOG_TAG, "onResume_fragment_add_detector");
+
         db = databaseHelper.open();
 
         cursor_detector = db.rawQuery("select * from " + Constants.TABLE_DETECTOR, null);
@@ -140,6 +145,7 @@ public class FragmentAddDetector extends Fragment implements View.OnClickListene
     @Override
     public void onDestroy() {
         super.onDestroy();
+        Log.d(LOG_TAG, "onDestroy_fragment_add_detector");
         db.close();
         cursor_detector.close();
         cursor.close();
@@ -147,7 +153,7 @@ public class FragmentAddDetector extends Fragment implements View.OnClickListene
 
     @Override
     public void onClick(View v) {
-
+        Log.d(LOG_TAG, "onClick_fragment_add_detector");
         double x = Double.parseDouble(distanceX.getText().toString());
         double y = Double.parseDouble(distanceY.getText().toString());
         double z = Double.parseDouble(distanceZ.getText().toString());

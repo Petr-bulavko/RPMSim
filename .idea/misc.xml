@@ -1,0 +1,41 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project version="4">
+  <component name="DesignSurface">
+    <option name="filePathToZoomLevelMap">
+      <map>
+        <entry key="..\:/Users/Petr/AndroidStudioProjects/RPMSim/app/src/main/res/drawable-v24/ic_baseline_check_circle_24.xml" value="0.1" />
+        <entry key="..\:/Users/Petr/AndroidStudioProjects/RPMSim/app/src/main/res/drawable-v24/ic_baseline_delete_24.xml" value="0.1" />
+        <entry key="..\:/Users/Petr/AndroidStudioProjects/RPMSim/app/src/main/res/drawable-v24/ic_baseline_select_all_24.xml" value="0.1" />
+        <entry key="..\:/Users/Petr/AndroidStudioProjects/RPMSim/app/src/main/res/layout/activity_main.xml" value="0.36666666666666664" />
+        <entry key="..\:/Users/Petr/AndroidStudioProjects/RPMSim/app/src/main/res/layout/custom_row.xml" value="0.22" />
+        <entry key="..\:/Users/Petr/AndroidStudioProjects/RPMSim/app/src/main/res/layout/fragment_add_detector.xml" value="0.33" />
+        <entry key="..\:/Users/Petr/AndroidStudioProjects/RPMSim/app/src/main/res/layout/fragment_add_source.xml" value="0.33" />
+        <entry key="..\:/Users/Petr/AndroidStudioProjects/RPMSim/app/src/main/res/layout/fragment_detector.xml" value="0.25" />
+        <entry key="..\:/Users/Petr/AndroidStudioProjects/RPMSim/app/src/main/res/layout/fragment_edit_detector.xml" value="0.36666666666666664" />
+        <entry key="..\:/Users/Petr/AndroidStudioProjects/RPMSim/app/src/main/res/layout/fragment_edit_source.xml" value="0.36666666666666664" />
+        <entry key="..\:/Users/Petr/AndroidStudioProjects/RPMSim/app/src/main/res/layout/fragment_other_parameter.xml" value="0.33" />
+        <entry key="..\:/Users/Petr/AndroidStudioProjects/RPMSim/app/src/main/res/layout/fragment_other_parametr.xml" value="0.33" />
+        <entry key="..\:/Users/Petr/AndroidStudioProjects/RPMSim/app/src/main/res/layout/fragment_page.xml" value="0.1" />
+        <entry key="..\:/Users/Petr/AndroidStudioProjects/RPMSim/app/src/main/res/layout/fragment_page_four.xml" value="0.36666666666666664" />
+        <entry key="..\:/Users/Petr/AndroidStudioProjects/RPMSim/app/src/main/res/layout/fragment_page_three.xml" value="0.36666666666666664" />
+        <entry key="..\:/Users/Petr/AndroidStudioProjects/RPMSim/app/src/main/res/layout/fragment_page_two.xml" value="0.36666666666666664" />
+        <entry key="..\:/Users/Petr/AndroidStudioProjects/RPMSim/app/src/main/res/layout/fragment_result.xml" value="0.33" />
+        <entry key="..\:/Users/Petr/AndroidStudioProjects/RPMSim/app/src/main/res/layout/fragment_root.xml" value="0.36666666666666664" />
+        <entry key="..\:/Users/Petr/AndroidStudioProjects/RPMSim/app/src/main/res/layout/fragment_screen_slide_page.xml" value="0.36666666666666664" />
+        <entry key="..\:/Users/Petr/AndroidStudioProjects/RPMSim/app/src/main/res/layout/fragment_source.xml" value="0.1" />
+        <entry key="..\:/Users/Petr/AndroidStudioProjects/RPMSim/app/src/main/res/layout/item_listview_edit.xml" value="0.36666666666666664" />
+        <entry key="..\:/Users/Petr/AndroidStudioProjects/RPMSim/app/src/main/res/layout/item_main.xml" value="0.1" />
+        <entry key="..\:/Users/Petr/AndroidStudioProjects/RPMSim/app/src/main/res/layout/item_recycler_view_edit.xml" value="0.36666666666666664" />
+        <entry key="..\:/Users/Petr/AndroidStudioProjects/RPMSim/app/src/main/res/layout/list_sensitivity.xml" value="0.23143115942028986" />
+        <entry key="..\:/Users/Petr/AndroidStudioProjects/RPMSim/app/src/main/res/layout/spinner_list.xml" value="0.36666666666666664" />
+        <entry key="..\:/Users/Petr/AndroidStudioProjects/RPMSim/app/src/main/res/menu/menu.xml" value="0.1935185185185185" />
+      </map>
+    </option>
+  </component>
+  <component name="ProjectRootManager" version="2" languageLevel="JDK_11" default="true" project-jdk-name="Android Studio default JDK" project-jdk-type="JavaSDK">
+    <output url="file://$PROJECT_DIR$/build/classes" />
+  </component>
+  <component name="ProjectType">
+    <option name="id" value="Android" />
+  </component>
+</project>

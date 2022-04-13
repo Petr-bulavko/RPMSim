@@ -30,6 +30,8 @@ public class Alarm {
     private double countRateResult = 0;
     //Сигнал тревоги
     private boolean alarm_bool = false;
+    //Сумма порогов рабочего массива
+    private double sum_work_array = 0;
 
     public Alarm(double backgroundArraySize, double numberOfThreshold, double falseAlarmPeriod, double backgroundMode) {
         this.backgroundArraySize = backgroundArraySize;
@@ -54,6 +56,9 @@ public class Alarm {
         for (int i = 0; i < workingArraySize; i++) {
             workArray.add(new CountRate(detectorBackground, false));
         }
+        for (int i = 0; i < numberOfThreshold; i++) {
+            sum_work_array += workArray.get(i).getCountRate();
+        }
         for (int i = 0; i < backgroundArraySize; i++) {
             background.add(detectorBackground);
             countRateN += background.get(i);
@@ -71,7 +76,6 @@ public class Alarm {
         if (backgroundMode == 2)
             false_prob *= 0.9;
 
-        //Вот тут расчет должен быть
         double sigma_threshold;
 
         for (int i = 1; i <= numberOfThreshold; i++) {
@@ -141,23 +145,27 @@ public class Alarm {
 
         workArray.remove(0);
         workArray.add(countRate);
+        sum_work_array = sum_work_array + workArray.get(workArray.size() - 1).getCountRate() - workArray.get((int) (workArray.size() - numberOfThreshold - 1)).getCountRate();
 
         //Порог
         double threshold;
-        double getCountRate;
+        double getCountRate = sum_work_array;
         //Максимальный фон
         double bckg = countRateResult * numberOfThreshold;
         for (int i = arrayListSigma.size() - 1; i >= 0; i--) {
             threshold = bckg + arrayListSigma.get(i) * Math.sqrt(bckg);
-            getCountRate = workArray.get(workArray.size() - 1).getCountRate();
 
             if (getCountRate > threshold) {
                 countAlarm(i);
                 alarm_bool = true;
                 //Если тревога, то всем эелементам до этого ставим false (не может перейти в фон)
-                workArray.get(workArray.size() - 1).setBckg(false);
+                for (int j = 1; j <= i; j++) {
+                    workArray.get(workArray.size() - j).setBckg(false);
+                }
                 break;
             }
+            if (i == 0) break;
+            getCountRate -= workArray.get(workArray.size() - i).getCountRate();
             bckg -= countRateResult;
 
         }
@@ -176,19 +184,22 @@ public class Alarm {
     public boolean alarmHandModeAndConstantMode(CountRate countRate) {
         workArray.remove(0);
         workArray.add(countRate);
+        sum_work_array = sum_work_array + workArray.get(workArray.size() - 1).getCountRate() - workArray.get((int) (workArray.size() - numberOfThreshold - 1)).getCountRate();
 
         double threshold;
-        double getCountRate;
+        double getCountRate = sum_work_array;
         double bckg = countRateResult * numberOfThreshold;
+
         for (int i = arrayListSigma.size() - 1; i >= 0; i--) {
             threshold = bckg + arrayListSigma.get(i) * Math.sqrt(bckg);
-            getCountRate = workArray.get(workArray.size() - 1).getCountRate();
 
             if (getCountRate > threshold) {
                 countAlarm(i);
                 alarm_bool = true;
                 break;
             }
+            if (i == 0) break;
+            getCountRate -= workArray.get(workArray.size() - i).getCountRate();
             bckg -= countRateResult;
         }
 

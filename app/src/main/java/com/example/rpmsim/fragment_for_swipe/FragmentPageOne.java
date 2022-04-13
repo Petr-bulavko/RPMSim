@@ -27,7 +27,7 @@ public class FragmentPageOne extends Fragment {
     public void onCreate(@Nullable Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         pageNumber = getArguments() != null ? getArguments().getInt("page_number") : 1;
-        Log.d(LOG_TAG, "onCreate");
+        Log.d(LOG_TAG, "onCreate_fragment_page_one");
 
         //Пока не ебу
         //Фрагмент приходит, но не восстанавливается
@@ -47,44 +47,44 @@ public class FragmentPageOne extends Fragment {
     @Override
     public View onCreateView(@NonNull LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
         View result = inflater.inflate(R.layout.fragment_page_one, container, false);
-        Log.d(LOG_TAG, "onCreateView");
+        Log.d(LOG_TAG, "onCreateView_fragment_page_one");
         return result;
     }
 
     @Override
     public void onViewCreated(@NonNull View view, @Nullable Bundle savedInstanceState) {
         super.onViewCreated(view, savedInstanceState);
-        Log.d(LOG_TAG, "onViewCreated");
+        Log.d(LOG_TAG, "onViewCreated_fragment_page_one");
     }
 
     @Override
     public void onViewStateRestored(@Nullable Bundle savedInstanceState) {
         super.onViewStateRestored(savedInstanceState);
-        Log.d(LOG_TAG, "onViewStateRestored");
+        Log.d(LOG_TAG, "onViewStateRestored_fragment_page_one");
     }
 
     @Override
     public void onStart() {
         super.onStart();
-        Log.d(LOG_TAG, "onStart");
+        Log.d(LOG_TAG, "onStart_fragment_page_one");
     }
 
     @Override
     public void onResume() {
         super.onResume();
-        Log.d(LOG_TAG, "onResume");
+        Log.d(LOG_TAG, "onResume_fragment_page_one");
     }
 
     @Override
     public void onPause() {
         super.onPause();
-        Log.d(LOG_TAG, "onPause");
+        Log.d(LOG_TAG, "onPause_fragment_page_one");
     }
 
     @Override
     public void onStop() {
         super.onStop();
-        Log.d(LOG_TAG, "onStop");
+        Log.d(LOG_TAG, "onStop_fragment_page_one");
     }
 
     @Override
@@ -100,13 +100,13 @@ public class FragmentPageOne extends Fragment {
     @Override
     public void onDestroyView() {
         super.onDestroyView();
-        Log.d(LOG_TAG, "onDestroyView");
+        Log.d(LOG_TAG, "onDestroyView_fragment_page_one");
     }
 
     @Override
     public void onDestroy() {
         super.onDestroy();
-        Log.d(LOG_TAG, "onDestroy");
+        Log.d(LOG_TAG, "onDestroy_fragment_page_one");
     }
 
     //Если понадобится номер страницы
