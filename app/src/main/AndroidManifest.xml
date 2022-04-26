@@ -21,6 +21,8 @@
         </activity>
 
         <activity android:name=".activity.EditSource"/>
+        <activity android:name=".activity.EditDetector"/>
+        <activity android:name=".activity.AddDetector"/>
     </application>
 
 </manifest>

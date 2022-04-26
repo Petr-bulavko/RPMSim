@@ -34,8 +34,8 @@ public class FragmentResult extends Fragment implements View.OnClickListener {
     private ListView sigmaResult;
     private ListView detectorResult;
 
-    private ArrayList<Detector> detectors = new ArrayList<>();
-    private ArrayList<Source> sources = new ArrayList<>();
+    private ArrayList<Detector> detectors;
+    private ArrayList<Source> sources;
     //Время выдержки БД, мс
     private double holdingTime;
     // м/с
@@ -96,6 +96,8 @@ public class FragmentResult extends Fragment implements View.OnClickListener {
     @SuppressLint("DefaultLocale")
     @Override
     public void onClick(View v) {
+        detectors = FragmentDetector.getDetectors();
+        sources = FragmentAddSource.getSources();
 
         Log.d(LOG_TAG, "onClick_fragment_result");
         //Пока хз, чего он не работает
@@ -136,6 +138,8 @@ public class FragmentResult extends Fragment implements View.OnClickListener {
         }
         //Т.к. фон у нас в имп/с, то фон делим на число проходов (сколько раз детектор собирает информацию в с)
         double backgroundGaps = sumBackground / numberOfGapsInSecond;
+        //
+        double backgroundInMillis = sumBackground * 0.001;
         //Заполнение рабочего и фоного массивов, а также расчет сигм
         alarmClass.fillingArrays(backgroundGaps, workingArray, backgroundArray);
 
@@ -149,13 +153,13 @@ public class FragmentResult extends Fragment implements View.OnClickListener {
             //Цикл по милисекундно
             for (int j = 0; j < time; j++) {
                 sourceStartPointX += distanceInMilliSecond;
-                sumCountRate += calcCountRate(detectors, sources, alarmClass, sourceStartPointX);
+                sumCountRate += calcCountRate(detectors, sources, alarmClass, sourceStartPointX, backgroundInMillis);
                 count++;
                 if (count == holdingTime) {
                     alarm = alarmClass.calcAlarm(backgroundMode, alarm, sumCountRate);
                     sumCountRate = 0;
                     count = 0;
-                    countTime++;
+                    countTime += holdingTime;
                 }
                 if (interrupt) if (alarm) break;
             }
@@ -167,6 +171,8 @@ public class FragmentResult extends Fragment implements View.OnClickListener {
             countAlarm += arrayList.get(i);
         }
 
+        //отличие от изначального фона
+        double example = alarmClass.getCountRateResult();
         //Вывод сигм
         textView20.setText("Сигма, тревоги (по врем. интервалам)");
         ArrayList<Double> sigma = alarmClass.getArrayListSigma();
@@ -176,13 +182,15 @@ public class FragmentResult extends Fragment implements View.OnClickListener {
         textView21.setText("Мощность дозы и скорость счета");
         detectors_derivation();
 
+        //Кол-во тревог
         numberOfAlarms.setText(String.format("%d", countAlarm));
+        //Кол-во перемещений
         numberOfMovementsResult.setText(String.format("%.0f", numberOfMovements));
-        //Пока хз
+        //Пока хз (вероятность обнаружения)
         detectionProbabilityResult.setText("");
-        //Надо еще подумать
-        duration.setText(String.format("%d", countTime));
-        //результат в с
+        //Надо еще подумать (длительность)
+        duration.setText(String.format("%d", countTime / 1000));
+        //результат в с (планируемая длительность)
         plannedDuration.setText(String.format("%.0f", time / 1000 * numberOfMovements));
 
         progressBar.setVisibility(View.INVISIBLE);
@@ -214,8 +222,8 @@ public class FragmentResult extends Fragment implements View.OnClickListener {
         for (int i = 0; i < detectors.size(); i++) {
             for (int j = 0; j < sources.size(); j++) {
 
-                double sumCountRateTop = 0;
-                double sumCountRateBottom = 0;
+                double sumCountRateTop;
+                double sumCountRateBottom;
 
                 double part = detector_geometrical(detectors.get(i));
                 double xz = detectors.get(i).getGeometricalSizes() / (part * 2);
@@ -264,7 +272,6 @@ public class FragmentResult extends Fragment implements View.OnClickListener {
     }
 
     public double detector_geometrical(Detector detector) {
-        Log.d(LOG_TAG, "detector_geometrical_fragment_result");
         if (detector.getGeometricalSizes() == 0) {
             return 1;
         } else if (detector.getGeometricalSizes() == 0.4) {
@@ -274,7 +281,7 @@ public class FragmentResult extends Fragment implements View.OnClickListener {
         }
     }
 
-    public double calcCountRate(ArrayList<Detector> detectors, ArrayList<Source> sources, Alarm alarm, double sourceStartPointX){
+    public double calcCountRate(ArrayList<Detector> detectors, ArrayList<Source> sources, Alarm alarm, double sourceStartPointX, double backgroundInMillis){
         PoissonDistribution poissonDistribution;
         int number_source;
         double sourceDistance;
@@ -312,11 +319,16 @@ public class FragmentResult extends Fragment implements View.OnClickListener {
 
                     if (sensitivity_number != 0) {
                         if (Math.ceil(part / 2) == 1) {
-                            countRate = alarm.calcCountRate(doseRate, sensitivity_number);
+                            //Добавляем фоновое значение за 1мс
+                            countRate = alarm.calcCountRate(doseRate, sensitivity_number) + backgroundInMillis;
                             poissonDistribution = new PoissonDistribution(countRate);
                             sumCountRate += poissonDistribution.sample();
                         } else {
-                            countRate = alarm.calcCountRate(doseRate, sensitivity_number);
+                            //Доп расчет по горизонтали и вертикали для чувствительности (грубо говоря область видимость детектора)
+                            double v_cos = -sourceStartPointX / Math.sqrt(Math.pow(sourceStartPointX - detectors.get(j).getY(), 2) + Math.pow(sources.get(0).getCoordinateSourceX() - detectors.get(i).getX(), 2));
+                            double g_cos = -sourceStartPointX / Math.sqrt(Math.pow(sourceStartPointX - detectors.get(j).getY(), 2) + Math.pow(sources.get(0).getCoordinateSourceZ() - (detectors.get(i).getZ() - xz * xzi), 2));
+                            //Добавляем фоновое значение за 1мс
+                            countRate = alarm.calcCountRate(doseRate, sensitivity_number) * v_cos * g_cos + backgroundInMillis;
                             poissonDistribution = new PoissonDistribution(countRate);
                             sumCountRateTop = poissonDistribution.sample();
                             sumCountRateBottom = poissonDistribution.sample();
@@ -351,8 +363,6 @@ public class FragmentResult extends Fragment implements View.OnClickListener {
             falseAlarmRate = result.getDouble("txtFalseAlarmRate");
             interrupt = result.getBoolean("txtInterrupt");
             backgroundMode = result.getInt("txtBackgroundMode");
-            sources = (ArrayList<Source>) result.getSerializable("sources");
-            detectors = (ArrayList<Detector>) result.getSerializable("detectors");
         });
     }
 }

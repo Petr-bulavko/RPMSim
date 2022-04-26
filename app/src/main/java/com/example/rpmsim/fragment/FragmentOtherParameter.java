@@ -31,9 +31,6 @@ public class FragmentOtherParameter extends Fragment implements View.OnClickList
     CheckBox txtInterrupt;
     Spinner txtBackgroundMode;
 
-    ArrayList<Source> sources;
-    ArrayList<Detector> detectors;
-
     @Nullable
     @Override
     public View onCreateView(@NonNull LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
@@ -89,15 +86,6 @@ public class FragmentOtherParameter extends Fragment implements View.OnClickList
     public void onResume() {
         super.onResume();
         Log.d(LOG_TAG, "onResume_fragment_other_parameter");
-
-        getParentFragmentManager().setFragmentResultListener("request_sources_and_detectors", this, new FragmentResultListener() {
-            @Override
-            public void onFragmentResult(@NonNull String requestKey, @NonNull Bundle result) {
-                sources = (ArrayList<Source>) result.getSerializable("sources");
-                detectors = (ArrayList<Detector>) result.getSerializable("detectors");
-            }
-        });
-
     }
 
     @Override
@@ -117,8 +105,6 @@ public class FragmentOtherParameter extends Fragment implements View.OnClickList
         bundle.putDouble("txtDetectionProbability", Double.parseDouble(txtDetectionProbability.getText().toString()));
         bundle.putDouble("txtFalseAlarmRate", Double.parseDouble(txtFalseAlarmRate.getText().toString()));
         bundle.putInt("txtBackgroundMode", txtBackgroundMode.getSelectedItemPosition());
-        bundle.putSerializable("sources", sources);
-        bundle.putSerializable("detectors", detectors);
         boolean interrupt = false;
         if (txtInterrupt.isChecked()) {
             interrupt = true;
@@ -133,7 +119,8 @@ public class FragmentOtherParameter extends Fragment implements View.OnClickList
     @Override
     public void onClick(View v) {
         Log.d(LOG_TAG, "onClick_fragment_other_parameter");
-        double update = Double.parseDouble(txtFalseAlarmRate.getText().toString()) * Double.parseDouble(txtSourcePathLength.getText().toString());
+        double update = Double.parseDouble(txtFalseAlarmRate.getText().toString()) *
+                Double.parseDouble(txtSourcePathLength.getText().toString()) / Double.parseDouble(txtTravelSpeedSource.getText().toString());
         txtFalseAlarmPeriod.setText(String.format("%.0f", update));
     }
 }

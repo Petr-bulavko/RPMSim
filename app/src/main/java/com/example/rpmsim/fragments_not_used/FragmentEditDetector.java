@@ -1,4 +1,4 @@
-package com.example.rpmsim.fragment;
+package com.example.rpmsim.fragments_not_used;
 
 import android.annotation.SuppressLint;
 import android.database.Cursor;
@@ -25,6 +25,7 @@ import com.example.rpmsim.R;
 import com.example.rpmsim.database.Constants;
 import com.example.rpmsim.database.DatabaseHelper;
 import com.example.rpmsim.entity.Detector;
+import com.example.rpmsim.fragment.FragmentDetector;
 import com.example.rpmsim.recycler_view_adapter.EditDetectorAdapter;
 
 import java.util.ArrayList;
@@ -65,7 +66,7 @@ public class FragmentEditDetector extends Fragment implements View.OnClickListen
     @Nullable
     @Override
     public View onCreateView(@NonNull LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
-        View result = inflater.inflate(R.layout.fragment_edit_detector, container, false);
+        View result = inflater.inflate(R.layout.activity_edit_detector, container, false);
         Log.d(LOG_TAG, "onCreateView_fragment_edit_detector");
         backgroundEdit = result.findViewById(R.id.backgroundEdit);
         distanceXEdit = result.findViewById(R.id.distanceXEdit);
@@ -192,7 +193,7 @@ public class FragmentEditDetector extends Fragment implements View.OnClickListen
         detectors.get(position_recycler).setGeometricalSizes(geometric_size);
 
         FragmentManager fragmentManager = requireActivity().getSupportFragmentManager();
-        fragmentManager.beginTransaction().replace(R.id.swipe_page_one, FragmentDetector.newInstance(detectors)).commit();
+        fragmentManager.beginTransaction().replace(R.id.fragment_detector, FragmentDetector.newInstance(detectors)).commit();
 
     }
 

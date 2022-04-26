@@ -1,6 +1,7 @@
 package com.example.rpmsim.fragment;
 
 import android.annotation.SuppressLint;
+import android.content.Intent;
 import android.os.Bundle;
 import android.util.Log;
 import android.view.LayoutInflater;
@@ -11,24 +12,30 @@ import android.widget.Button;
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.fragment.app.Fragment;
-import androidx.fragment.app.FragmentManager;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
 import com.example.rpmsim.R;
+import com.example.rpmsim.activity.AddDetector;
 import com.example.rpmsim.entity.Detector;
 import com.example.rpmsim.recycler_view_adapter.DetectorAdapter;
 
 import java.util.ArrayList;
+import java.util.Locale;
 
+//Главная страница)
 public class FragmentDetector extends Fragment {
 
+    private static ArrayList<Detector> detectors = new ArrayList<>();
     final String LOG_TAG = "myLogs";
 
     private RecyclerView recycler_view_detector;
 
-    ArrayList<Detector> detectors = new ArrayList<>();
-    ArrayList<String> arrayList = new ArrayList<>();
+    private ArrayList<String> arrayList;
+
+    public static ArrayList<Detector> getDetectors() {
+        return detectors;
+    }
 
     @Nullable
     @Override
@@ -39,10 +46,11 @@ public class FragmentDetector extends Fragment {
         Button addNewDetector = result.findViewById(R.id.addNewDetector);
 
         addNewDetector.setOnClickListener(new View.OnClickListener() {
+            @SuppressLint("ResourceType")
             @Override
             public void onClick(View v) {
-                FragmentManager fragmentManager = requireActivity().getSupportFragmentManager();
-                fragmentManager.beginTransaction().replace(R.id.swipe_page_one, FragmentAddDetector.newInstance(detectors)).commit();
+                Intent intent = new Intent(getContext(), AddDetector.class);
+                requireContext().startActivity(intent);
             }
         });
 
@@ -61,16 +69,10 @@ public class FragmentDetector extends Fragment {
     @Override
     public void onResume() {
         super.onResume();
-
         Log.d(LOG_TAG, "onResume_fragment_detector");
-
-        Bundle args = getArguments();
-        if (args != null) {
-            detectors = (ArrayList<Detector>) args.getSerializable("detectors");
-        }
-
+        arrayList = new ArrayList<>();
         for (int i = 0; i < detectors.size(); i++) {
-            arrayList.add(String.format("%s - (%.0f, %.0f, %.0f) фон - %.1f",
+            arrayList.add(String.format(Locale.ROOT,"%s - (%.0f, %.0f, %.0f) фон - %.1f",
                     detectors.get(i).getNameDetector(), detectors.get(i).getX(),
                     detectors.get(i).getY(), detectors.get(i).getZ(), detectors.get(i).getBackground()));
         }
@@ -78,17 +80,18 @@ public class FragmentDetector extends Fragment {
         recycler_view_detector.setLayoutManager(new LinearLayoutManager(getActivity()));
         DetectorAdapter adapter = new DetectorAdapter(getActivity(), arrayList, detectors);
         recycler_view_detector.setAdapter(adapter);
-
-        //Короче тут беру массив detectors и закидываю в bundle
-
-        Bundle bundle = new Bundle();
-        bundle.putSerializable("detectors", detectors);
-        getParentFragmentManager().setFragmentResult("request_detectors", bundle);
     }
 
     @Override
     public void onPause() {
         super.onPause();
         Log.d(LOG_TAG, "onPause_fragment_detector");
+    }
+
+    public static void add_detectors(Detector detector) {
+        detectors.add(detector);
+    }
+    public static void save_detectors(ArrayList<Detector> arrayList) {
+        detectors = arrayList;
     }
 }

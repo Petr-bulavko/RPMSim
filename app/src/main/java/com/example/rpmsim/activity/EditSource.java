@@ -1,11 +1,15 @@
 package com.example.rpmsim.activity;
 
 import android.annotation.SuppressLint;
-import android.content.Intent;
+import android.content.Context;
 import android.database.Cursor;
 import android.database.sqlite.SQLiteDatabase;
+import android.graphics.Rect;
 import android.os.Bundle;
+import android.view.MotionEvent;
 import android.view.View;
+import android.view.WindowManager;
+import android.view.inputmethod.InputMethodManager;
 import android.widget.AdapterView;
 import android.widget.Button;
 import android.widget.EditText;
@@ -15,8 +19,6 @@ import android.widget.TextView;
 import androidx.annotation.Nullable;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.cursoradapter.widget.SimpleCursorAdapter;
-import androidx.fragment.app.Fragment;
-import androidx.fragment.app.FragmentManager;
 
 import com.example.rpmsim.R;
 import com.example.rpmsim.database.Constants;
@@ -26,7 +28,6 @@ import com.example.rpmsim.fragment.FragmentAddSource;
 
 import java.util.ArrayList;
 import java.util.Locale;
-import java.util.Objects;
 
 public class EditSource extends AppCompatActivity implements View.OnClickListener{
 
@@ -46,7 +47,7 @@ public class EditSource extends AppCompatActivity implements View.OnClickListene
     @Override
     protected void onCreate(@Nullable Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        setContentView(R.layout.fragment_edit_source);
+        setContentView(R.layout.activity_edit_source);
 
         txtCoefficientEdit = findViewById(R.id.txtCoefficientEdit);
         editCoefficient = findViewById(R.id.editCoefficient);
@@ -83,9 +84,6 @@ public class EditSource extends AppCompatActivity implements View.OnClickListene
                     while (cursor.moveToNext() && cursor_source.moveToNext()) {
                         editCoefficient.append(cursor.getString(1));
                         nameSource = cursor_source.getString(0);
-                        //База даных сохранена или на телефоне или на компе
-//                        String s = cursor.getString(2);
-//                        txtCoefficientEdit.setText(String.format("Коэффициент, %s", "sd"));
                     }
 
                 } else {
@@ -95,8 +93,6 @@ public class EditSource extends AppCompatActivity implements View.OnClickListene
                     editCoordinateSourceY.setText(String.format(Locale.ROOT, "%.0f", sources.get(positionInRecycler).getCoordinateSourceY()));
                     editCoordinateSourceZ.setText(String.format(Locale.ROOT, "%.0f", sources.get(positionInRecycler).getCoordinateSourceZ()));
                 }
-
-
             }
 
             @Override
@@ -107,6 +103,7 @@ public class EditSource extends AppCompatActivity implements View.OnClickListene
 
         databaseHelper = new DatabaseHelper(this);
         databaseHelper.create_db();
+        getWindow().setSoftInputMode(WindowManager.LayoutParams.SOFT_INPUT_ADJUST_PAN);
     }
 
     @Override
@@ -144,6 +141,25 @@ public class EditSource extends AppCompatActivity implements View.OnClickListene
         sources.get(positionInRecycler).setCoordinateSourceY(Double.parseDouble(editCoordinateSourceY.getText().toString()));
         sources.get(positionInRecycler).setCoordinateSourceZ(Double.parseDouble(editCoordinateSourceZ.getText().toString()));
         sources.get(positionInRecycler).setCoefficient(Double.parseDouble(editCoefficient.getText().toString()));
+
+        FragmentAddSource.save_source(sources);
         this.finish();
+    }
+
+    @Override
+    public boolean dispatchTouchEvent(MotionEvent ev) {
+        if (ev.getAction() == MotionEvent.ACTION_DOWN) {
+            View v = getCurrentFocus();
+            if ( v instanceof EditText) {
+                Rect outRect = new Rect();
+                v.getGlobalVisibleRect(outRect);
+                if (!outRect.contains((int)ev.getRawX(), (int)ev.getRawY())) {
+                    v.clearFocus();
+                    InputMethodManager imm = (InputMethodManager) getSystemService(Context.INPUT_METHOD_SERVICE);
+                    imm.hideSoftInputFromWindow(v.getWindowToken(), 0);
+                }
+            }
+        }
+        return super.dispatchTouchEvent(ev);
     }
 }

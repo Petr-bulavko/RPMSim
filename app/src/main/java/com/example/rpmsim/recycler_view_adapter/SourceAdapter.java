@@ -4,7 +4,6 @@ import android.annotation.SuppressLint;
 import android.content.Context;
 import android.content.Intent;
 import android.graphics.Color;
-import android.os.Bundle;
 import android.view.ActionMode;
 import android.view.LayoutInflater;
 import android.view.Menu;
@@ -18,7 +17,6 @@ import android.widget.TextView;
 import androidx.annotation.NonNull;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.fragment.app.FragmentActivity;
-import androidx.fragment.app.FragmentManager;
 import androidx.lifecycle.LifecycleOwner;
 import androidx.lifecycle.Observer;
 import androidx.lifecycle.ViewModelProviders;
@@ -27,12 +25,8 @@ import androidx.recyclerview.widget.RecyclerView;
 import com.example.rpmsim.R;
 import com.example.rpmsim.activity.EditSource;
 import com.example.rpmsim.entity.Source;
-import com.example.rpmsim.fragment.FragmentAddDetector;
-import com.example.rpmsim.fragment.FragmentEditDetector;
-import com.example.rpmsim.fragment.FragmentEditSource;
 
 import java.util.ArrayList;
-
 
 public class SourceAdapter extends RecyclerView.Adapter<SourceAdapter.ViewHolder> {
 
@@ -183,13 +177,18 @@ public class SourceAdapter extends RecyclerView.Adapter<SourceAdapter.ViewHolder
                 if (isEnable) {
                     ClickItem(holder);
                 } else {
-                    FragmentEditSource fragmentEditSource = new FragmentEditSource();
-                    Bundle args = new Bundle();
-                    args.putSerializable("sources", arrayListSource);
-                    args.putInt("position", position);
-                    fragmentEditSource.setArguments(args);
-                    FragmentManager fragmentManager = ((AppCompatActivity)context).getSupportFragmentManager();
-                    fragmentManager.beginTransaction().setCustomAnimations(R.anim.to_left_in, R.anim.to_left_out).replace(R.id.swipe_page_two, fragmentEditSource).commit();
+                    Intent intent = new Intent(context, EditSource.class);
+                    intent.putExtra("sources", arrayListSource);
+                    intent.putExtra("position", position);
+                    context.startActivity(intent);
+
+//                    FragmentEditSource fragmentEditSource = new FragmentEditSource();
+//                    Bundle args = new Bundle();
+//                    args.putSerializable("sources", arrayListSource);
+//                    args.putInt("position", position);
+//                    fragmentEditSource.setArguments(args);
+//                    FragmentManager fragmentManager = ((AppCompatActivity)context).getSupportFragmentManager();
+//                    fragmentManager.beginTransaction().setCustomAnimations(R.anim.to_left_in, R.anim.to_left_out).replace(R.id.swipe_page_two, fragmentEditSource).commit();
                 }
             }
         });

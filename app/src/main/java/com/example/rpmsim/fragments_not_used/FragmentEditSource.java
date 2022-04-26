@@ -1,4 +1,4 @@
-package com.example.rpmsim.fragment;
+package com.example.rpmsim.fragments_not_used;
 
 import android.annotation.SuppressLint;
 import android.database.Cursor;
@@ -24,6 +24,7 @@ import com.example.rpmsim.R;
 import com.example.rpmsim.database.Constants;
 import com.example.rpmsim.database.DatabaseHelper;
 import com.example.rpmsim.entity.Source;
+import com.example.rpmsim.fragment.FragmentAddSource;
 
 import java.util.ArrayList;
 import java.util.Locale;
@@ -48,7 +49,7 @@ public class FragmentEditSource extends Fragment implements View.OnClickListener
     @Nullable
     @Override
     public View onCreateView(@NonNull LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
-        View result = inflater.inflate(R.layout.fragment_edit_source, container, false);
+        View result = inflater.inflate(R.layout.activity_edit_source, container, false);
         Log.d(LOG_TAG, "onCreateView_fragment_edit_source");
         txtCoefficientEdit = result.findViewById(R.id.txtCoefficientEdit);
         editCoefficient = result.findViewById(R.id.editCoefficient);
@@ -150,7 +151,7 @@ public class FragmentEditSource extends Fragment implements View.OnClickListener
         sources.get(positionInRecycler).setCoordinateSourceZ(Double.parseDouble(editCoordinateSourceZ.getText().toString()));
         sources.get(positionInRecycler).setCoefficient(Double.parseDouble(editCoefficient.getText().toString()));
 
-        FragmentManager fragmentManager = requireActivity().getSupportFragmentManager();
-        fragmentManager.beginTransaction().replace(R.id.swipe_page_two, FragmentAddSource.newInstance(sources)).commit();
+//        FragmentManager fragmentManager = requireActivity().getSupportFragmentManager();
+//        fragmentManager.beginTransaction().replace(R.id.swipe_page_two, FragmentAddSource.newInstance(sources)).commit();
     }
 }

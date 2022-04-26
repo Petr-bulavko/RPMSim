@@ -35,6 +35,7 @@ import java.util.Locale;
 
 public class FragmentAddSource extends Fragment implements View.OnClickListener {
 
+    private static ArrayList<Source> sources;
     final String LOG_TAG = "myLogs";
 
     private EditText txtCoefficient, activitySource, coordinateSourceX, coordinateSourceY, coordinateSourceZ;
@@ -53,8 +54,6 @@ public class FragmentAddSource extends Fragment implements View.OnClickListener 
     private String nameSource;
     private String dimension_factor;
 
-    ArrayList<Source> sources;
-    ArrayList<Detector> detectors;
     ArrayList<String> arrayList;
 
     public static FragmentAddSource newInstance(ArrayList<Source> sources) {
@@ -63,6 +62,10 @@ public class FragmentAddSource extends Fragment implements View.OnClickListener 
         args.putSerializable("save_source", sources);
         fragmentAddSource.setArguments(args);
         return fragmentAddSource;
+    }
+
+    public static ArrayList<Source> getSources() {
+        return sources;
     }
 
     @Nullable
@@ -98,8 +101,6 @@ public class FragmentAddSource extends Fragment implements View.OnClickListener 
 
                 while (cursor.moveToNext()) {
                     txtCoefficient.append(cursor.getString(1));
-
-                    //Почему то не обновляется бд
                     dimension_factor = cursor.getString(cursor.getColumnIndex(Constants.COLUMN_SOURCE_FACTOR_DIMENSION));
                 }
             }
@@ -137,11 +138,6 @@ public class FragmentAddSource extends Fragment implements View.OnClickListener 
         adapter_source.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
         spinner_source.setAdapter(adapter_source);
 
-        Bundle args = getArguments();
-        if (args != null) {
-            sources = (ArrayList<Source>) args.getSerializable("save_source");
-        }
-
         arrayList = new ArrayList<>();
         for (int i = 0; i < sources.size(); i++) {
             arrayList.add(String.format(Locale.ROOT,"%s" + " [%.0f - %s] - (%.1f, %.1f, %.1f)", sources.get(i).getNameSource(),
@@ -151,18 +147,6 @@ public class FragmentAddSource extends Fragment implements View.OnClickListener 
         recyclerView.setLayoutManager(new LinearLayoutManager(getActivity()));
         adapter = new SourceAdapter(getActivity(), arrayList, sources);
         recyclerView.setAdapter(adapter);
-
-        getParentFragmentManager().setFragmentResultListener("request_detectors", this, new FragmentResultListener() {
-            @Override
-            public void onFragmentResult(@NonNull String requestKey, @NonNull Bundle result) {
-                detectors = (ArrayList<Detector>) result.getSerializable("detectors");
-            }
-        });
-
-        Bundle bundle = new Bundle();
-        bundle.putSerializable("sources", sources);
-        bundle.putSerializable("detectors", detectors);
-        getParentFragmentManager().setFragmentResult("request_sources_and_detectors", bundle);
     }
 
     @Override
@@ -223,5 +207,9 @@ public class FragmentAddSource extends Fragment implements View.OnClickListener 
     public void onPause() {
         super.onPause();
         Log.d(LOG_TAG, "onPause_fragment_add_source");
+    }
+
+    public static void save_source(ArrayList<Source> arrayList){
+        sources = arrayList;
     }
 }

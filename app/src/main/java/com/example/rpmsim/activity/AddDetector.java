@@ -1,14 +1,16 @@
-package com.example.rpmsim.fragment;
+package com.example.rpmsim.activity;
 
 import android.annotation.SuppressLint;
 import android.content.Context;
 import android.database.Cursor;
 import android.database.sqlite.SQLiteDatabase;
+import android.graphics.Rect;
 import android.os.Bundle;
 import android.util.Log;
-import android.view.LayoutInflater;
+import android.view.MotionEvent;
 import android.view.View;
-import android.view.ViewGroup;
+import android.view.WindowManager;
+import android.view.inputmethod.InputMethodManager;
 import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
 import android.widget.Button;
@@ -16,25 +18,20 @@ import android.widget.EditText;
 import android.widget.ListView;
 import android.widget.Spinner;
 
-import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.cursoradapter.widget.SimpleCursorAdapter;
-import androidx.fragment.app.Fragment;
-import androidx.fragment.app.FragmentManager;
-
 
 import com.example.rpmsim.R;
 import com.example.rpmsim.database.Constants;
 import com.example.rpmsim.database.DatabaseHelper;
 import com.example.rpmsim.entity.Detector;
-import com.example.rpmsim.entity.Source;
-import com.example.rpmsim.fragment_adpter.MyAdapter;
+import com.example.rpmsim.fragments_not_used.FragmentAddDetector;
+import com.example.rpmsim.fragment.FragmentDetector;
 
 import java.util.ArrayList;
-import java.util.Objects;
 
-public class FragmentAddDetector extends Fragment implements View.OnClickListener {
+public class AddDetector extends AppCompatActivity implements View.OnClickListener {
 
     final String LOG_TAG = "myLogs";
 
@@ -58,25 +55,25 @@ public class FragmentAddDetector extends Fragment implements View.OnClickListene
 
     ArrayList<Double> detector_sensitivity_array = new ArrayList<>();
     ArrayList<String> arrayList = new ArrayList<>();
-    ArrayList<Detector> detectors = new ArrayList<>();
 
-    @Nullable
     @Override
-    public View onCreateView(@NonNull LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
-        View result = inflater.inflate(R.layout.fragment_add_detector, container, false);
+    protected void onCreate(@Nullable Bundle savedInstanceState) {
+        super.onCreate(savedInstanceState);
+        setContentView(R.layout.activity_add_detector);
+
         Log.d(LOG_TAG, "onCreateView_fragment_add_detector");
 
-        spinner_detector = result.findViewById(R.id.spinner_detector);
-        background = result.findViewById(R.id.background);
-        distanceX = result.findViewById(R.id.distanceX);
+        spinner_detector = findViewById(R.id.spinner_detector);
+        background = findViewById(R.id.background);
+        distanceX = findViewById(R.id.distanceX);
         distanceX.setText("0");
-        distanceY = result.findViewById(R.id.distanceY);
+        distanceY = findViewById(R.id.distanceY);
         distanceY.setText("0");
-        distanceZ = result.findViewById(R.id.distanceZ);
+        distanceZ = findViewById(R.id.distanceZ);
         distanceZ.setText("0");
-        addNewDetector = result.findViewById(R.id.add_detector);
+        addNewDetector = findViewById(R.id.add_detector);
         addNewDetector.setOnClickListener(this);
-        listView = result.findViewById(R.id.sensitivity);
+        listView = findViewById(R.id.sensitivity);
 
         spinner_detector.setOnItemSelectedListener(new AdapterView.OnItemSelectedListener() {
             @SuppressLint({"Range", "DefaultLocale"})
@@ -106,7 +103,7 @@ public class FragmentAddDetector extends Fragment implements View.OnClickListene
                     arrayList.add(String.format("%-10.0f [%s - %s]", detector_sensitivity, nameSource, dimension));
                 }
 
-                ArrayAdapter<String> adapter = new ArrayAdapter<>(getActivity(), android.R.layout.simple_list_item_1, arrayList);
+                ArrayAdapter<String> adapter = new ArrayAdapter<>(getApplication(), android.R.layout.simple_list_item_1, arrayList);
                 listView.setAdapter(adapter);
             }
 
@@ -116,10 +113,9 @@ public class FragmentAddDetector extends Fragment implements View.OnClickListene
             }
         });
 
-        databaseHelper = new DatabaseHelper(getActivity());
+        databaseHelper = new DatabaseHelper(getApplication());
         databaseHelper.create_db();
-
-        return result;
+        getWindow().setSoftInputMode(WindowManager.LayoutParams.SOFT_INPUT_ADJUST_PAN);
     }
 
     @SuppressLint("Range")
@@ -135,7 +131,7 @@ public class FragmentAddDetector extends Fragment implements View.OnClickListene
 
         String[] detectors = new String[]{Constants.COLUMN_NAME_DETECTOR};
 
-        SimpleCursorAdapter adapter_detector = new SimpleCursorAdapter(getActivity(),
+        SimpleCursorAdapter adapter_detector = new SimpleCursorAdapter(getApplication(),
                 android.R.layout.simple_spinner_item,
                 cursor_detector, detectors, new int[]{android.R.id.text1}, 0);
         adapter_detector.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
@@ -153,22 +149,16 @@ public class FragmentAddDetector extends Fragment implements View.OnClickListene
 
     @Override
     public void onClick(View v) {
-        Log.d(LOG_TAG, "onClick_fragment_add_detector");
         double x = Double.parseDouble(distanceX.getText().toString());
         double y = Double.parseDouble(distanceY.getText().toString());
         double z = Double.parseDouble(distanceZ.getText().toString());
         double backgroundDetector = Double.parseDouble(background.getText().toString());
         int position = spinner_detector.getSelectedItemPosition();
-        Bundle args = getArguments();
-        if (args != null) {
-            detectors = (ArrayList<Detector>) args.getSerializable("detectors_from_add");
-        }
 
-        detectors.add(new Detector(nameDetector, detector_sensitivity_array, x, y, z, geometric_size, backgroundDetector, position));
+        Detector detector = new Detector(nameDetector, detector_sensitivity_array, x, y, z, geometric_size, backgroundDetector, position);
 
-        FragmentManager fragmentManager = requireActivity().getSupportFragmentManager();
-        fragmentManager.beginTransaction().replace(R.id.swipe_page_one, FragmentDetector.newInstance(detectors)).commit();
-
+        FragmentDetector.add_detectors(detector);
+        this.finish();
     }
 
     public static FragmentAddDetector newInstance(ArrayList<Detector> detectors) {
@@ -177,5 +167,22 @@ public class FragmentAddDetector extends Fragment implements View.OnClickListene
         args.putSerializable("detectors_from_add", detectors);
         fragmentAddDetector.setArguments(args);
         return fragmentAddDetector;
+    }
+
+    @Override
+    public boolean dispatchTouchEvent(MotionEvent ev) {
+        if (ev.getAction() == MotionEvent.ACTION_DOWN) {
+            View v = getCurrentFocus();
+            if ( v instanceof EditText) {
+                Rect outRect = new Rect();
+                v.getGlobalVisibleRect(outRect);
+                if (!outRect.contains((int)ev.getRawX(), (int)ev.getRawY())) {
+                    v.clearFocus();
+                    InputMethodManager imm = (InputMethodManager) getSystemService(Context.INPUT_METHOD_SERVICE);
+                    imm.hideSoftInputFromWindow(v.getWindowToken(), 0);
+                }
+            }
+        }
+        return super.dispatchTouchEvent(ev);
     }
 }

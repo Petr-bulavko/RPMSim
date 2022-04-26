@@ -29,7 +29,7 @@ public class Alarm {
     //Среднее значение фонового массива
     private double countRateResult = 0;
     //Сигнал тревоги
-    private boolean alarm_bool = false;
+    private boolean alarm_bool;
     //Сумма порогов рабочего массива
     private double sum_work_array = 0;
 
@@ -138,70 +138,84 @@ public class Alarm {
         return alarm;
     }
 
+
     //Расчет тревоги в адаптивном режиме
     public boolean alarmAdaptiveMode(CountRate countRate) {
-        //Тут удаляем элемент и проверяем у элемента false или true
-        //Надо перепроверить
 
-        workArray.remove(0);
-        workArray.add(countRate);
-        sum_work_array = sum_work_array + workArray.get(workArray.size() - 1).getCountRate() - workArray.get((int) (workArray.size() - numberOfThreshold - 1)).getCountRate();
+        //Тут вроде бы все норм, надо перепроверить входные значения
 
         //Порог
         double threshold;
-        double getCountRate = sum_work_array;
         //Максимальный фон
-        double bckg = countRateResult * numberOfThreshold;
-        for (int i = arrayListSigma.size() - 1; i >= 0; i--) {
-            threshold = bckg + arrayListSigma.get(i) * Math.sqrt(bckg);
+        double bckg = countRateResult;
+        //Тревога
+        alarm_bool = false;
+        //Счетчик
+        int j = -1;
+        workArray.remove(0);
+        workArray.add(countRate);
 
+        double getCountRate = 0;
+        for (int i = 1; i <= numberOfThreshold; i++) {
+            getCountRate += workArray.get(workArray.size() - i).getCountRate();
+            threshold = bckg * i + arrayListSigma.get(i - 1) * Math.sqrt(bckg * i);
             if (getCountRate > threshold) {
-                countAlarm(i);
                 alarm_bool = true;
-                //Если тревога, то всем эелементам до этого ставим false (не может перейти в фон)
-                for (int j = 1; j <= i; j++) {
-                    workArray.get(workArray.size() - j).setBckg(false);
-                }
-                break;
+                j = i;
             }
-            if (i == 0) break;
-            getCountRate -= workArray.get(workArray.size() - i).getCountRate();
-            bckg -= countRateResult;
-
+        }
+        if (j > 0) {
+            for (int i = 0; i < j; i++) {
+                workArray.get(workArray.size() - (i + 1)).setBckg(false);
+            }
+            countAlarm(j - 1);
         }
 
-        if (workArray.get(workArray.size() - 1).isBckg()) {
-            background.add(workArray.get(workArray.size() - 1).getCountRate());
-            countRateN = countRateN - background.get(0) + background.get(background.size() - 1);
+        if (workArray.get(0).isBckg()) {
+            countRateN = countRateN - background.get(0) + workArray.get(0).getCountRate();
             countRateResult = countRateN / backgroundArraySize;
             background.remove(0);
+            background.add(workArray.get(0).getCountRate());
         }
 
         return alarm_bool;
     }
 
+    public double getCountRateResult() {
+        return countRateResult;
+    }
+
     //Расчет тревоги в константном и в ручном режиме
     public boolean alarmHandModeAndConstantMode(CountRate countRate) {
+        //Порог
+        double threshold;
+        //Максимальный фон
+        double bckg = countRateResult;
+        //Тревога
+        alarm_bool = false;
+        //Счетчик
+        int j = -1;
         workArray.remove(0);
         workArray.add(countRate);
-        sum_work_array = sum_work_array + workArray.get(workArray.size() - 1).getCountRate() - workArray.get((int) (workArray.size() - numberOfThreshold - 1)).getCountRate();
 
-        double threshold;
-        double getCountRate = sum_work_array;
-        double bckg = countRateResult * numberOfThreshold;
-
-        for (int i = arrayListSigma.size() - 1; i >= 0; i--) {
-            threshold = bckg + arrayListSigma.get(i) * Math.sqrt(bckg);
-
+        double getCountRate = 0;
+        for (int i = 1; i <= numberOfThreshold; i++) {
+            getCountRate += workArray.get(workArray.size() - i).getCountRate();
+            threshold = bckg * i + arrayListSigma.get(i - 1) * Math.sqrt(bckg * i);
             if (getCountRate > threshold) {
-                countAlarm(i);
                 alarm_bool = true;
-                break;
+                j = i;
             }
-            if (i == 0) break;
-            getCountRate -= workArray.get(workArray.size() - i).getCountRate();
-            bckg -= countRateResult;
         }
+
+        if (j > 0) {
+            for (int i = 0; i < j; i++) {
+                workArray.get(workArray.size() - (i + 1)).setBckg(false);
+            }
+            countAlarm(j - 1);
+        }
+
+        //В константном и ручном режиме используется таже система что и в адаптивном кроме того что в адаптивном используется обновление фона
 
         return alarm_bool;
     }

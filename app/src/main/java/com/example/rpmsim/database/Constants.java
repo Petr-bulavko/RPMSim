@@ -23,5 +23,8 @@ public class Constants {
     public static final String COLUMN_SOURCE_FACTOR_ID = "_id";
     public static final String COLUMN_SOURCE_FACTOR_VALUE = "source_factor_value";
     public static final String COLUMN_SOURCE_FACTOR_DIMENSION = "dimension_factor";
-
+    //таблица защиты
+    public static final String TABLE_SHIELD = "shield";
+    public static final String COLUMN_ID_SHIELD = "_id";
+    public static final String COLUMN_NAME_MATERIAL = "name_material";
 }

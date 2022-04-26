@@ -2,7 +2,6 @@ package com.example.rpmsim.recycler_view_adapter;
 
 import android.annotation.SuppressLint;
 import android.content.Context;
-import android.content.Intent;
 import android.graphics.Color;
 import android.view.ActionMode;
 import android.view.LayoutInflater;
@@ -23,27 +22,24 @@ import androidx.lifecycle.ViewModelProviders;
 import androidx.recyclerview.widget.RecyclerView;
 
 import com.example.rpmsim.R;
-import com.example.rpmsim.activity.EditDetector;
-import com.example.rpmsim.entity.Detector;
 
 import java.util.ArrayList;
 
-public class DetectorAdapter extends RecyclerView.Adapter<DetectorAdapter.ViewHolder> {
+public class MaterialAdapter extends RecyclerView.Adapter<MaterialAdapter.ViewHolder> {
 
     Context context;
     ArrayList<String> arrayList;
-    ArrayList<Detector> arrayListDetector;
 
     MainViewModel mainViewModel;
     boolean isEnable = false;
     boolean isSelectAll = false;
     ArrayList<String> selectList = new ArrayList<>();
 
-    public DetectorAdapter(Context context, ArrayList<String> arrayList, ArrayList<Detector> arrayListDetector) {
+    public MaterialAdapter(Context context, ArrayList<String> arrayList) {
         this.context = context;
         this.arrayList = arrayList;
-        this.arrayListDetector = arrayListDetector;
     }
+
 
     @NonNull
     @Override
@@ -59,8 +55,7 @@ public class DetectorAdapter extends RecyclerView.Adapter<DetectorAdapter.ViewHo
 
     @SuppressLint("DefaultLocale")
     @Override
-    public void onBindViewHolder(@NonNull ViewHolder holder, @SuppressLint("RecyclerView") int position) {
-
+    public void onBindViewHolder(@NonNull ViewHolder holder, int position) {
         holder.textView.setText(String.format("%d. %s", position + 1, arrayList.get(position)));
 
         holder.itemView.setOnLongClickListener(new View.OnLongClickListener() {
@@ -111,7 +106,6 @@ public class DetectorAdapter extends RecyclerView.Adapter<DetectorAdapter.ViewHo
                                     // when click on delete
                                     // use for loop
                                     for (String s : selectList) {
-                                        arrayListDetector.remove(arrayList.indexOf(s));
                                         arrayList.remove(s);
 
                                     }
@@ -171,29 +165,7 @@ public class DetectorAdapter extends RecyclerView.Adapter<DetectorAdapter.ViewHo
                 return true;
             }
         });
-        holder.itemView.setOnClickListener(new View.OnClickListener() {
-            @SuppressLint("ResourceType")
-            @Override
-            public void onClick(View v) {
-                if (isEnable) {
-                    ClickItem(holder);
-                } else {
 
-                    Intent intent = new Intent(context, EditDetector.class);
-                    intent.putExtra("edit_detector", arrayListDetector);
-                    intent.putExtra("position_recycler_detector", position);
-                    context.startActivity(intent);
-                    //Изменение этого элемента
-//                    FragmentEditDetector fragmentEditDetector = new FragmentEditDetector();
-//                    Bundle args = new Bundle();
-//                    args.putSerializable("edit_detector", arrayListDetector);
-//                    args.putInt("position_recycler_detector", position);
-//                    fragmentEditDetector.setArguments(args);
-//                    FragmentManager fragmentManager = ((AppCompatActivity)context).getSupportFragmentManager();
-//                    fragmentManager.beginTransaction().replace(R.id.fragment_detector, fragmentEditDetector).commit();
-                }
-            }
-        });
         if (isSelectAll) {
             holder.checkbox.setVisibility(View.VISIBLE);
             holder.itemView.setBackgroundColor(Color.LTGRAY);
@@ -227,7 +199,7 @@ public class DetectorAdapter extends RecyclerView.Adapter<DetectorAdapter.ViewHo
         return arrayList.size();
     }
 
-    public static class ViewHolder extends RecyclerView.ViewHolder {
+    public class ViewHolder extends RecyclerView.ViewHolder {
         // initialize variables
         TextView textView;
         ImageView checkbox;
