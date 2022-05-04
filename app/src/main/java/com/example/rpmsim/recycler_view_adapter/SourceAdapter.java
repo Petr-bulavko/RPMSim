@@ -181,14 +181,6 @@ public class SourceAdapter extends RecyclerView.Adapter<SourceAdapter.ViewHolder
                     intent.putExtra("sources", arrayListSource);
                     intent.putExtra("position", position);
                     context.startActivity(intent);
-
-//                    FragmentEditSource fragmentEditSource = new FragmentEditSource();
-//                    Bundle args = new Bundle();
-//                    args.putSerializable("sources", arrayListSource);
-//                    args.putInt("position", position);
-//                    fragmentEditSource.setArguments(args);
-//                    FragmentManager fragmentManager = ((AppCompatActivity)context).getSupportFragmentManager();
-//                    fragmentManager.beginTransaction().setCustomAnimations(R.anim.to_left_in, R.anim.to_left_out).replace(R.id.swipe_page_two, fragmentEditSource).commit();
                 }
             }
         });

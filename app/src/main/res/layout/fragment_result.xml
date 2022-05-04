@@ -146,7 +146,7 @@
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="parent"
-        app:layout_constraintVertical_bias="0.992" />
+        app:layout_constraintVertical_bias="1.0" />
 
     <ListView
         android:id="@+id/sigmaResult"
@@ -173,7 +173,6 @@
         android:id="@+id/textView20"
         android:layout_width="290dp"
         android:layout_height="20dp"
-        android:layout_marginBottom="5dp"
         android:textColor="@color/black"
         android:textSize="14dp"
         app:layout_constraintBottom_toTopOf="@+id/sigmaResult"
@@ -186,7 +185,6 @@
         android:id="@+id/textView21"
         android:layout_width="290dp"
         android:layout_height="20dp"
-        android:layout_marginBottom="5dp"
         android:textColor="@color/black"
         android:textSize="14dp"
         app:layout_constraintBottom_toTopOf="@+id/detectorResult"
@@ -194,5 +192,28 @@
         app:layout_constraintVertical_bias="1.0"
         tools:ignore="MissingConstraints"
         tools:layout_editor_absoluteX="0dp" />
+
+    <TextView
+        android:id="@+id/textView22"
+        android:layout_width="290dp"
+        android:layout_height="20dp"
+        android:gravity="center|left"
+        android:text="Фон, имп/с"
+        android:textColor="@color/black"
+        android:textSize="14dp"
+        app:layout_constraintBottom_toBottomOf="@+id/textView23"
+        app:layout_constraintEnd_toStartOf="@+id/textView23" />
+
+    <TextView
+        android:id="@+id/textView23"
+        android:layout_width="70dp"
+        android:layout_height="20dp"
+        android:gravity="center"
+        android:text="TextView"
+        android:textColor="@color/black"
+        android:textSize="14dp"
+        app:layout_constraintEnd_toEndOf="@+id/plannedDuration"
+        app:layout_constraintStart_toStartOf="@+id/plannedDuration"
+        app:layout_constraintTop_toBottomOf="@+id/plannedDuration" />
 
 </androidx.constraintlayout.widget.ConstraintLayout>

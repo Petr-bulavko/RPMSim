@@ -27,4 +27,9 @@ public class Constants {
     public static final String TABLE_SHIELD = "shield";
     public static final String COLUMN_ID_SHIELD = "_id";
     public static final String COLUMN_NAME_MATERIAL = "name_material";
+    //таблица коэф для различных источников и защиты
+    public static final String TABLE_SHIELD_SOURCE = "shield_source";
+    public static final String COLUMN_ID_SHIELD_SOURCE = "_id";
+    public static final String COLUMN_ID_SOURCE_SHIELD = "source_id";
+    public static final String COLUMN_SOURCE_SHIELD_VALUE = "value";
 }

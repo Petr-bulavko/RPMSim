@@ -113,8 +113,8 @@ public class Alarm {
 
     //Расчет мощности дозы
     public double calcDoseRate(double sourceActivity, double distance, double sourceCoefficient) {
-        // Так как прошу вводить в кБк то умножим на 10^3
-        return sourceActivity / Math.pow(distance, 2) * sourceCoefficient * Math.pow(10, -12) * Math.pow(10, 3);
+        // Так как прошу вводить в кБк то умножим на 10^3, лучше спросить
+        return sourceActivity / Math.pow(distance, 2) * sourceCoefficient * Math.pow(10, -12);
     }
 
     //Расчет скорости счета
@@ -146,7 +146,7 @@ public class Alarm {
 
         //Порог
         double threshold;
-        //Максимальный фон
+        //Среднее фоновое значение массива
         double bckg = countRateResult;
         //Тревога
         alarm_bool = false;

@@ -185,7 +185,7 @@ public class FragmentAddSource extends Fragment implements View.OnClickListener 
             sources.get(i).setCoordinateSourceX(x);
             sources.get(i).setCoordinateSourceY(y);
             sources.get(i).setCoordinateSourceZ(z);
-            arrayList.add(String.format(Locale.ROOT,"%s" + " [%.0f - %s] - (%.1f, %.1f, %.1f)", sources.get(i).getNameSource(),
+            arrayList.add(String.format(Locale.ROOT,"%s" + " [%.1f - %s] - (%.1f, %.1f, %.1f)", sources.get(i).getNameSource(),
                     sources.get(i).getActivitySource(), sources.get(i).getDimension_factor(), sources.get(i).getCoordinateSourceX(),
                     sources.get(i).getCoordinateSourceY(), sources.get(i).getCoordinateSourceZ()));
         }

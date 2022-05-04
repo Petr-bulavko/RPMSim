@@ -22,6 +22,7 @@ import androidx.lifecycle.ViewModelProviders;
 import androidx.recyclerview.widget.RecyclerView;
 
 import com.example.rpmsim.R;
+import com.example.rpmsim.entity.Shield;
 
 import java.util.ArrayList;
 
@@ -29,15 +30,17 @@ public class MaterialAdapter extends RecyclerView.Adapter<MaterialAdapter.ViewHo
 
     Context context;
     ArrayList<String> arrayList;
+    ArrayList<Shield> shields;
 
     MainViewModel mainViewModel;
     boolean isEnable = false;
     boolean isSelectAll = false;
     ArrayList<String> selectList = new ArrayList<>();
 
-    public MaterialAdapter(Context context, ArrayList<String> arrayList) {
+    public MaterialAdapter(Context context, ArrayList<String> arrayList, ArrayList<Shield> shields) {
         this.context = context;
         this.arrayList = arrayList;
+        this.shields = shields;
     }
 
 
@@ -106,8 +109,8 @@ public class MaterialAdapter extends RecyclerView.Adapter<MaterialAdapter.ViewHo
                                     // when click on delete
                                     // use for loop
                                     for (String s : selectList) {
+                                        shields.remove(arrayList.indexOf(s));
                                         arrayList.remove(s);
-
                                     }
                                     // finish action mode
                                     mode.finish();

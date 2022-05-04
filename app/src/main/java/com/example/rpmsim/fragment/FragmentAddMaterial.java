@@ -21,11 +21,14 @@ import androidx.recyclerview.widget.RecyclerView;
 import com.example.rpmsim.R;
 import com.example.rpmsim.database.Constants;
 import com.example.rpmsim.database.DatabaseHelper;
+import com.example.rpmsim.entity.Shield;
 import com.example.rpmsim.recycler_view_adapter.MaterialAdapter;
 
 import java.util.ArrayList;
 
 public class FragmentAddMaterial extends Fragment implements View.OnClickListener {
+
+    private static ArrayList<Shield> shields;
 
     private Spinner spinner_material;
     private EditText thickness;
@@ -39,6 +42,10 @@ public class FragmentAddMaterial extends Fragment implements View.OnClickListene
 
     ArrayList<String> arrayList = new ArrayList<>();
 
+    public static ArrayList<Shield> getShields() {
+        return shields;
+    }
+
     @Nullable
     @Override
     public View onCreateView(@NonNull LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
@@ -51,6 +58,7 @@ public class FragmentAddMaterial extends Fragment implements View.OnClickListene
         add_material = result.findViewById(R.id.add_material);
         add_material.setOnClickListener(this);
 
+        shields = new ArrayList<>();
         databaseHelper = new DatabaseHelper(getActivity());
         databaseHelper.create_db();
         return result;
@@ -80,17 +88,20 @@ public class FragmentAddMaterial extends Fragment implements View.OnClickListene
         cursor_shield.close();
     }
 
-    @SuppressLint("Range")
+    @SuppressLint({"Range", "DefaultLocale"})
     @Override
     public void onClick(View v) {
         double txtThickness = Double.parseDouble(thickness.getText().toString());
+        String name_shield = null;
         cursor_shield = db.rawQuery("select * from " + Constants.TABLE_SHIELD + " where " + Constants.COLUMN_ID_SHIELD +
                 "=" + (spinner_material.getSelectedItemPosition() + 1), null);
         while (cursor_shield.moveToNext()) {
-            arrayList.add(cursor_shield.getString(cursor_shield.getColumnIndex(Constants.COLUMN_NAME_MATERIAL)));
+            name_shield = cursor_shield.getString(cursor_shield.getColumnIndex(Constants.COLUMN_NAME_MATERIAL));
+            arrayList.add(String.format("%s - %.0f мм",name_shield, txtThickness));
         }
         recycler_view_shield.setLayoutManager(new LinearLayoutManager(getActivity()));
-        MaterialAdapter adapter = new MaterialAdapter(getActivity(), arrayList);
+        MaterialAdapter adapter = new MaterialAdapter(getActivity(), arrayList, shields);
         recycler_view_shield.setAdapter(adapter);
+        shields.add(new Shield(name_shield, txtThickness, spinner_material.getSelectedItemPosition() + 1));
     }
 }
