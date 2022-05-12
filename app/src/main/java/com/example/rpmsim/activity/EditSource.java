@@ -72,13 +72,12 @@ public class EditSource extends AppCompatActivity implements View.OnClickListene
             public void onItemSelected(AdapterView<?> parent, View view, int position, long id) {
                 editCoefficient.setText("");
                 if (sources.get(positionInRecycler).getPositionInSpinner() != position) {
-                    /*Constants.COLUMN_SOURCE_FACTOR_DIMENSION*/
                     cursor = db.rawQuery("select * from " + Constants.TABLE_SOURCE_FACTOR + " where "
                             + Constants.COLUMN_SOURCE_FACTOR_ID +
                             "=" + (spinner_source_edit.getSelectedItemPosition() + 1), null);
 
-                    cursor_source = db.rawQuery("select " + Constants.COLUMN_NAME_SOURCE + " from " + Constants.TABLE_SOURCE + " where "
-                            + Constants.COLUMN_ID_SOURCE +
+                    cursor_source = db.rawQuery("select " + Constants.COLUMN_NAME_SOURCE + " from "
+                            + Constants.TABLE_SOURCE + " where " + Constants.COLUMN_ID_SOURCE +
                             "=" + (spinner_source_edit.getSelectedItemPosition() + 1), null);
 
                     while (cursor.moveToNext() && cursor_source.moveToNext()) {
@@ -89,9 +88,9 @@ public class EditSource extends AppCompatActivity implements View.OnClickListene
                 } else {
                     editActivitySource.setText(String.format(Locale.ROOT, "%.1f", sources.get(positionInRecycler).getActivitySource()));
                     editCoefficient.setText(String.format(Locale.ROOT, "%.4f", sources.get(positionInRecycler).getCoefficient()));
-                    editCoordinateSourceX.setText(String.format(Locale.ROOT, "%.0f", sources.get(positionInRecycler).getCoordinateSourceX()));
-                    editCoordinateSourceY.setText(String.format(Locale.ROOT, "%.0f", sources.get(positionInRecycler).getCoordinateSourceY()));
-                    editCoordinateSourceZ.setText(String.format(Locale.ROOT, "%.0f", sources.get(positionInRecycler).getCoordinateSourceZ()));
+                    editCoordinateSourceX.setText(String.format(Locale.ROOT, "%.1f", sources.get(positionInRecycler).getCoordinateSourceX()));
+                    editCoordinateSourceY.setText(String.format(Locale.ROOT, "%.1f", sources.get(positionInRecycler).getCoordinateSourceY()));
+                    editCoordinateSourceZ.setText(String.format(Locale.ROOT, "%.1f", sources.get(positionInRecycler).getCoordinateSourceZ()));
                 }
             }
 

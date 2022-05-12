@@ -72,7 +72,7 @@ public class FragmentDetector extends Fragment {
         Log.d(LOG_TAG, "onResume_fragment_detector");
         arrayList = new ArrayList<>();
         for (int i = 0; i < detectors.size(); i++) {
-            arrayList.add(String.format(Locale.ROOT,"%s - (%.0f, %.0f, %.0f) фон - %.1f",
+            arrayList.add(String.format(Locale.ROOT,"%s - (%.1f, %.1f, %.1f) фон - %.1f",
                     detectors.get(i).getNameDetector(), detectors.get(i).getX(),
                     detectors.get(i).getY(), detectors.get(i).getZ(), detectors.get(i).getBackground()));
         }

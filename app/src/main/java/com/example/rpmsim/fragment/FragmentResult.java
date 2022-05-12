@@ -1,5 +1,8 @@
 package com.example.rpmsim.fragment;
 
+import static java.lang.Math.exp;
+import static java.lang.Math.log;
+
 import android.annotation.SuppressLint;
 import android.database.Cursor;
 import android.database.sqlite.SQLiteDatabase;
@@ -46,7 +49,7 @@ public class FragmentResult extends Fragment implements View.OnClickListener {
     private ArrayList<Detector> detectors;
     private ArrayList<Source> sources;
     private ArrayList<Shield> shields;
-    ArrayList<Double> coef;
+    ArrayList<ArrayList<Double>> coef;
     //Время выдержки БД, мс
     private double holdingTime;
     // м/с
@@ -123,14 +126,17 @@ public class FragmentResult extends Fragment implements View.OnClickListener {
         shields = FragmentAddMaterial.getShields();
         coef = new ArrayList<>();
 
+        ArrayList<Double> arrayList1 = new ArrayList<>();
+
         for (int j = 0; j < sources.size(); j++) {
             for (int i = 0; i < shields.size(); i++) {
                 cursor = db.rawQuery("select * from " + Constants.TABLE_SHIELD_SOURCE + " where " + Constants.COLUMN_ID_SHIELD_SOURCE +
                         "=" + shields.get(i).getId() + " and " + Constants.COLUMN_ID_SOURCE_SHIELD + "=" + (sources.get(j).getPositionInSpinner() + 1), null);
                 while (cursor.moveToNext()) {
-                    coef.add(cursor.getDouble(cursor.getColumnIndex(Constants.COLUMN_SOURCE_SHIELD_VALUE)));
+                    arrayList1.add(cursor.getDouble(cursor.getColumnIndex(Constants.COLUMN_SOURCE_SHIELD_VALUE)));
                 }
             }
+            coef.add(arrayList1);
         }
 
         Log.d(LOG_TAG, "onClick_fragment_result");
@@ -206,14 +212,16 @@ public class FragmentResult extends Fragment implements View.OnClickListener {
         numberOfAlarms.setText(String.format("%d", countAlarm));
         //Кол-во перемещений
         numberOfMovementsResult.setText(String.format("%.0f", numberOfMovements));
-        detectionProbabilityResult.setText(String.format(Locale.ROOT,"%.1f", 0.0));
+        //Вероятность обнаружения
+        double detection_prob = event_probability_get(countAlarm, (int) numberOfMovements, detectionProbability / 100);
+        detectionProbabilityResult.setText(String.format(Locale.ROOT, "%.1f", detection_prob));
         //Надо еще подумать (длительность)
         duration.setText(String.format("%d", countTime / 1000));
         //результат в с (планируемая длительность)
         plannedDuration.setText(String.format("%.0f", time / 1000 * numberOfMovements));
         //отличие от изначального фона
         bckg = alarmClass.getCountRateResult();
-        txtBackground.setText(String.format(Locale.ROOT,"%.1f", bckg * numberOfGapsInSecond));
+        txtBackground.setText(String.format(Locale.ROOT, "%.1f", bckg * numberOfGapsInSecond));
     }
 
     //Метод для вывода сигм
@@ -222,10 +230,92 @@ public class FragmentResult extends Fragment implements View.OnClickListener {
         Log.d(LOG_TAG, "sigma_derivation_fragment_result");
         sigma_array = new String[sigma.size()];
         for (int i = 0; i < sigma.size(); i++) {
-            sigma_array[i] = String.format(Locale.ROOT,"σ - %.2f - кол-во тревог: %.0f", sigma.get(i), alarm.get(i));
+            sigma_array[i] = String.format(Locale.ROOT, "σ - %.2f - кол-во тревог: %.0f", sigma.get(i), alarm.get(i));
         }
         adapter_sigma = new ArrayAdapter<>(getActivity(), android.R.layout.simple_list_item_1, sigma_array);
         sigmaResult.setAdapter(adapter_sigma);
+    }
+
+    public double calc_shield(Double doseRate, int i, double sourceDistance) {
+        for (int j = 0; j < shields.size(); j++) {
+            //Делим на 10 чтобы получить см
+            doseRate *= exp(-coef.get(i).get(j) * shields.get(j).getThickness() / 10) * compton_correction_coefficient_get(sources.get(i).getNameSource(), sourceDistance);
+        }
+        return doseRate;
+    }
+
+    public double detector_geometrical(Detector detector) {
+        if (detector.getGeometricalSizes() == 0) {
+            return 1;
+        } else if (detector.getGeometricalSizes() == 0.4) {
+            return 8;
+        } else {
+            return 10;
+        }
+    }
+
+    public double calcCountRate(ArrayList<Detector> detectors, ArrayList<Source> sources, Alarm alarm, double sourceStartPointX, double backgroundInMillis) {
+        PoissonDistribution poissonDistribution;
+        int number_source;
+        double sourceDistance;
+        double sumCountRate = 0;
+        double doseRate;
+        double sensitivity_number;
+        double sumCountRateTop;
+        double sumCountRateBottom;
+        double countRate;
+
+        for (int i = 0; i < detectors.size(); i++) {
+            for (int j = 0; j < sources.size(); j++) {
+                double part = detector_geometrical(detectors.get(i));
+
+                double xz = detectors.get(i).getGeometricalSizes() / (part * 2);
+                int xzi = 1;
+
+                for (int d = 0; d < Math.ceil(part / 2); d++) {
+                    sourceDistance = alarm.calcDistance(sourceStartPointX, detectors.get(i).getX(),
+                            sources.get(0).getCoordinateSourceY(),
+                            detectors.get(i).getY(), sources.get(0).getCoordinateSourceZ(), (detectors.get(i).getZ() + xz * xzi));
+                    number_source = sources.get(j).getPositionInSpinner();
+                    if (sources.get(j).getNameSource().equals("Cf-252") || sources.get(j).getNameSource().equals("PuBe")) {
+                        doseRate = alarm.calcDoseRate(sources.get(j).getActivitySource(), sourceDistance, sources.get(j).getCoefficient()) * sourceDistance * Math.pow(10, 7);//79577471545.9477
+                    } else {
+                        doseRate = alarm.calcDoseRate(sources.get(j).getActivitySource(), sourceDistance, sources.get(j).getCoefficient());
+                    }
+                    if (coef != null)
+                        doseRate = calc_shield(doseRate, j, sourceDistance);
+
+                    if (sources.get(j).getNameSource().equals("Cf-252") || sources.get(j).getNameSource().equals("PuBe")) {
+                        sensitivity_number = detectors.get(i).getSensitivity().get(number_source) / part * Math.pow(10, -6);
+                    } else {
+                        sensitivity_number = detectors.get(i).getSensitivity().get(number_source) / part;
+                    }
+
+                    if (sensitivity_number != 0) {
+                        if (Math.ceil(part / 2) == 1) {
+                            //Добавляем фоновое значение за 1мс
+                            countRate = alarm.calcCountRate(doseRate, sensitivity_number) + backgroundInMillis;
+                            poissonDistribution = new PoissonDistribution(countRate);
+                            sumCountRate += poissonDistribution.sample();
+                        } else {
+                            //Доп расчет по горизонтали и вертикали для чувствительности (грубо говоря область видимость детектора)
+                            double v_cos = -sourceStartPointX / Math.sqrt(Math.pow(sourceStartPointX - detectors.get(j).getX(), 2) + Math.pow(sources.get(0).getCoordinateSourceY() - detectors.get(i).getY(), 2));
+                            double g_cos = -sourceStartPointX / Math.sqrt(Math.pow(sourceStartPointX - detectors.get(j).getX(), 2) + Math.pow(sources.get(0).getCoordinateSourceZ() - (detectors.get(i).getZ() - xz * xzi), 2));
+                            //Добавляем фоновое значение за 1мс
+                            countRate = alarm.calcCountRate(doseRate, sensitivity_number) * v_cos * g_cos + backgroundInMillis / 10 / detectors.size();// хз на счет detectors.size()
+                            poissonDistribution = new PoissonDistribution(countRate);
+                            sumCountRateTop = poissonDistribution.sample();
+                            sumCountRateBottom = poissonDistribution.sample();
+                            sumCountRate += sumCountRateTop + sumCountRateBottom;
+                        }
+                    } else {
+                        continue;
+                    }
+                    xzi += 2;
+                }
+            }
+        }
+        return sumCountRate;
     }
 
     //Метод для вывода значений детектора
@@ -262,8 +352,8 @@ public class FragmentResult extends Fragment implements View.OnClickListener {
                     } else {
                         doseRate = alarm.calcDoseRate(sources.get(j).getActivitySource(), sourceDistance, sources.get(j).getCoefficient()) * Math.pow(10, 3);
                     }
-                    if(coef != null)
-                    doseRate = calc_shield(doseRate, j, sourceDistance);
+                    if (coef != null)
+                        doseRate = calc_shield(doseRate, j, sourceDistance);
 
                     if (sources.get(j).getNameSource().equals("Cf-252") || sources.get(j).getNameSource().equals("PuBe")) {
                         sensitivity_number = detectors.get(i).getSensitivity().get(number_source) / part * Math.pow(10, -1);
@@ -285,7 +375,7 @@ public class FragmentResult extends Fragment implements View.OnClickListener {
                     }
                     xzi += 2;
                 }
-                txtDetectors.add(String.format(Locale.ROOT,"%s - (%s) - %.4f | %.1f", detectors.get(i).getNameDetector(), sources.get(j).getNameSource(), doseRate * Math.pow(10, 6), countRate));
+                txtDetectors.add(String.format(Locale.ROOT, "%s - (%s) - %.4f | %.1f", detectors.get(i).getNameDetector(), sources.get(j).getNameSource(), doseRate * Math.pow(10, 6), countRate));
                 countRate = 0;
             }
         }
@@ -293,89 +383,7 @@ public class FragmentResult extends Fragment implements View.OnClickListener {
         detectorResult.setAdapter(adapter_detectors);
     }
 
-    public double calc_shield(Double doseRate, int i, double sourceDistance) {
-        for (int j = 0; j < shields.size(); j++) {
-                //Делим на 10 чтобы получить см
-                doseRate *= Math.exp(-coef.get(i) * shields.get(j).getThickness() / 10) * compton_correction_coefficient_get(sources.get(j).getNameSource(), sourceDistance);;
-        }
-        return doseRate;
-    }
-
-    public double detector_geometrical(Detector detector) {
-        if (detector.getGeometricalSizes() == 0) {
-            return 1;
-        } else if (detector.getGeometricalSizes() == 0.4) {
-            return 8;
-        } else {
-            return 10;
-        }
-    }
-
-    public double calcCountRate(ArrayList<Detector> detectors, ArrayList<Source> sources, Alarm alarm, double sourceStartPointX, double backgroundInMillis) {
-        PoissonDistribution poissonDistribution;
-        int number_source;
-        double sourceDistance;
-        double sumCountRate = 0;
-        double doseRate;
-        double sensitivity_number;
-        double sumCountRateTop;
-        double sumCountRateBottom;
-        double countRate;
-
-        for (int i = 0; i < detectors.size(); i++) {
-            for (int j = 0; j < sources.size(); j++) {
-                double part = detector_geometrical(detectors.get(i));
-                double xz = detectors.get(i).getGeometricalSizes() / (part * 2);
-                int xzi = 1;
-
-                for (int d = 0; d < Math.ceil(part / 2); d++) {
-                    sourceDistance = alarm.calcDistance(sourceStartPointX, detectors.get(i).getX(),
-                            sources.get(0).getCoordinateSourceY(),
-                            detectors.get(i).getY(), sources.get(0).getCoordinateSourceZ(), (detectors.get(i).getZ() - xz * xzi));
-                    number_source = sources.get(j).getPositionInSpinner();
-                    if (sources.get(j).getNameSource().equals("Cf-252") || sources.get(j).getNameSource().equals("PuBe")) {
-                        doseRate = alarm.calcDoseRate(sources.get(j).getActivitySource(), sourceDistance, sources.get(j).getCoefficient()) * sourceDistance * Math.pow(10, 7);//79577471545.9477
-                    } else {
-                        doseRate = alarm.calcDoseRate(sources.get(j).getActivitySource(), sourceDistance, sources.get(j).getCoefficient());
-                    }
-                    if(coef != null)
-                    doseRate = calc_shield(doseRate, j, sourceDistance);
-
-
-                    if (sources.get(j).getNameSource().equals("Cf-252") || sources.get(j).getNameSource().equals("PuBe")) {
-                        sensitivity_number = detectors.get(i).getSensitivity().get(number_source) / part * Math.pow(10, -6);
-                    } else {
-                        sensitivity_number = detectors.get(i).getSensitivity().get(number_source) / part;
-                    }
-
-                    if (sensitivity_number != 0) {
-                        if (Math.ceil(part / 2) == 1) {
-                            //Добавляем фоновое значение за 1мс
-                            countRate = alarm.calcCountRate(doseRate, sensitivity_number) + backgroundInMillis;
-                            poissonDistribution = new PoissonDistribution(countRate);
-                            sumCountRate += poissonDistribution.sample();
-                        } else {
-                            //Доп расчет по горизонтали и вертикали для чувствительности (грубо говоря область видимость детектора)
-                            double v_cos = -sourceStartPointX / Math.sqrt(Math.pow(sourceStartPointX - detectors.get(j).getY(), 2) + Math.pow(sources.get(0).getCoordinateSourceX() - detectors.get(i).getX(), 2));
-                            double g_cos = -sourceStartPointX / Math.sqrt(Math.pow(sourceStartPointX - detectors.get(j).getY(), 2) + Math.pow(sources.get(0).getCoordinateSourceZ() - (detectors.get(i).getZ() - xz * xzi), 2));
-                            //Добавляем фоновое значение за 1мс
-                            countRate = alarm.calcCountRate(doseRate, sensitivity_number) * v_cos * g_cos + backgroundInMillis / 10;
-                            poissonDistribution = new PoissonDistribution(countRate);
-                            sumCountRateTop = poissonDistribution.sample();
-                            sumCountRateBottom = poissonDistribution.sample();
-                            sumCountRate += sumCountRateTop + sumCountRateBottom;
-                        }
-                    } else {
-                        continue;
-                    }
-                    xzi += 2;
-                }
-            }
-        }
-        return sumCountRate;
-    }
-
-    public double compton_correction_coefficient_get(String name, Double _distance){
+    public double compton_correction_coefficient_get(String name, Double _distance) {
         double result = 1;
         if (name.equals("Cs-137"))
             result = 1.0 + 0.009154 * _distance + 0.0000356409 * _distance * _distance;//1.0 + 0.92*µ*d + 0.36*µ*µ*d*d;
@@ -384,12 +392,67 @@ public class FragmentResult extends Fragment implements View.OnClickListener {
         return result;
     }
 
+    public double event_probability_get(int _count_event, int _count_all, double _probability) {
+        double result = 0.0;
+        if (_count_event == 0)
+            result = 0.0;
+        else if (_count_event >= _count_all)
+            result = 100.0;
+        else {
+            if (_count_all > 10000000)
+                return ((double) (100 * _count_event / (double) _count_all));
+            //
+            double[] log_table = new double[100];
+            for (int i = 0; i < 100; i++)
+                log_table[i] = log(0.01 * (double) (i + 1));
+            //
+            double[] big_log_table = new double[_count_all];
+            for (int i = 0; i < _count_all; i++)
+                big_log_table[i] = log((i + 1));
+            //
+            double[] bin_coefs = new double[_count_all];
+            double vv_1 = 0.0;
+            double vv_2 = 0.0;
+            double vv_3 = 0.0;
+            for (int i = 0; i < _count_all; i++)
+                vv_1 += big_log_table[i];
+            vv_3 = vv_1;
+            for (int i = 0; i < _count_all; i++) {
+                double vv = vv_1 - vv_2 - vv_3;
+                bin_coefs[i] = vv;
+
+                vv_2 += big_log_table[i];
+                vv_3 -= big_log_table[_count_all - 1 - i];
+            }
+
+            if (_count_event > 0) {
+                double n_dbl = _count_all;
+                double py = 1.0;
+                int pi = 0;
+                int qi = 0;
+                do {
+                    pi++;
+                    qi = 100 - pi;
+                    py = 0.0;
+                    for (int i = 0; i <= _count_event; i++) {
+                        double k_dbl = i;
+                        double bc = bin_coefs[i];
+                        double lpk = bc + k_dbl * log_table[pi - 1] + (n_dbl - k_dbl) * log_table[qi - 1];
+                        py += exp(lpk);
+                    }
+                } while (py > _probability && pi < 100);
+                pi--;
+                result = pi;
+            }
+        }
+        return result;
+    }
+
     @Override
     public void onResume() {
         super.onResume();
         db = databaseHelper.open();
         Log.d(LOG_TAG, "onResume_fragment_result");
-        //Значения передаю цепочкой, но пока хз как лучше и как оно работает
         getParentFragmentManager().setFragmentResultListener("request_all", this, (requestKey, result) -> {
             holdingTime = result.getDouble("txtHoldingTime");
             speed = result.getDouble("txtTravelSpeedSource");
@@ -416,17 +479,21 @@ public class FragmentResult extends Fragment implements View.OnClickListener {
     @Override
     public void onViewStateRestored(@Nullable Bundle savedInstanceState) {
         super.onViewStateRestored(savedInstanceState);
-        if (savedInstanceState != null){
+        if (savedInstanceState != null) {
             numberOfAlarms.setText(String.format("%d", savedInstanceState.getInt("countAlarm")));
-            numberOfMovementsResult.setText(String.format(Locale.ROOT,"%.0f", savedInstanceState.getDouble("numberOfMovements")));
-            detectionProbabilityResult.setText(String.format(Locale.ROOT,"%.1f", savedInstanceState.getDouble("detectionProbability")));
+            numberOfMovementsResult.setText(String.format(Locale.ROOT, "%.0f", savedInstanceState.getDouble("numberOfMovements")));
+            detectionProbabilityResult.setText(String.format(Locale.ROOT, "%.1f", savedInstanceState.getDouble("detectionProbability")));
             duration.setText(String.format("%.0f", savedInstanceState.getDouble("duration")));
-            plannedDuration.setText(String.format(Locale.ROOT,"%.0f", savedInstanceState.getDouble("plannedDuration")));
-            txtBackground.setText(String.format(Locale.ROOT,"%.1f", savedInstanceState.getDouble("background")));
-            adapter_sigma = new ArrayAdapter<>(getActivity(), android.R.layout.simple_list_item_1, savedInstanceState.getStringArray("sigma"));
-            sigmaResult.setAdapter(adapter_sigma);
-            adapter_detectors = new ArrayAdapter<>(getActivity(), android.R.layout.simple_list_item_1, savedInstanceState.getStringArrayList("detectors"));
-            detectorResult.setAdapter(adapter_detectors);
+            plannedDuration.setText(String.format(Locale.ROOT, "%.0f", savedInstanceState.getDouble("plannedDuration")));
+            txtBackground.setText(String.format(Locale.ROOT, "%.1f", savedInstanceState.getDouble("background")));
+            String[] sigma = savedInstanceState.getStringArray("sigma");
+            ArrayList<String> arrayList = savedInstanceState.getStringArrayList("detectors");
+            if (sigma != null && arrayList != null) {
+                adapter_sigma = new ArrayAdapter<>(getActivity(), android.R.layout.simple_list_item_1, sigma);
+                sigmaResult.setAdapter(adapter_sigma);
+                adapter_detectors = new ArrayAdapter<>(getActivity(), android.R.layout.simple_list_item_1, arrayList);
+                detectorResult.setAdapter(adapter_detectors);
+            }
             txtSigma.setText("Сигма, тревоги (по врем. интервалам)");
             txtDoseRateAndCountRate.setText("Мощность дозы и скорость счета");
         }
